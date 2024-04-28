@@ -9,11 +9,13 @@ FLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equa
 
 TARGET = Language
 
-all: language
-	language.exe text_files\sourse_file.txt
+front: frontend
+	frontend.exe text_files\sourse_file.txt
 
-language: main.o parcer.o simplifier.o
-	g++ -o language main.o parcer.o simplifier.o
+frontend: main.o parcer.o simplifier.o
+	g++ -o frontend main.o parcer.o simplifier.o
+
+#back:
 
 main.o: src\main.cpp
 	g++ -c src\main.cpp $(FLAGS)
