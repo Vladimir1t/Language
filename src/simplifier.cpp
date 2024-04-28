@@ -6,7 +6,7 @@ static Class_operation long_op_determinator (char* operation);
 
 static int double_compare (double first_double, double second_double);
 
-double calculator (struct Node* tree, int* is_var_in_subtree)
+int calculator (struct Node* tree, int* is_var_in_subtree)
 {
     if (tree == NULL)
         return ERROR;
@@ -19,7 +19,7 @@ double calculator (struct Node* tree, int* is_var_in_subtree)
 
     if (tree->type == T_OP)
     {
-        switch (tree->data.operation)
+        switch (tree->data.op)
         {
             case '^':
                 return pow (calculator (tree->left, is_var_in_subtree), calculator (tree->right, is_var_in_subtree));
@@ -48,7 +48,7 @@ double calculator (struct Node* tree, int* is_var_in_subtree)
     }
     else if (tree->type == T_OP_LONG)
     {
-        switch (long_op_determinator (tree->data.operation_long))
+        switch (long_op_determinator (tree->data.op_long))
         {
             case OP_LN:
                 return log (calculator (tree->left, is_var_in_subtree));
@@ -132,13 +132,10 @@ void simplifier_conv_of_const (struct Node* tree, int* changed)
 
 void remove_neutral_elements (struct Node* tree, int* changed)
 {
-    double one  = 1;
-    double zero = 0;
-
-    if (tree->data.operation == '*')
+    if (tree->data.op == '*')
     {
-        if ((tree->left->type == T_NUM && double_compare (tree->left->data.value, zero)) ||
-            (tree->right->type == T_NUM && double_compare (tree->right->data.value, zero)))
+        if ((tree->left->type == T_NUM && tree->left->data.value == 0) ||
+            (tree->right->type == T_NUM && tree->right->data.value == 0))
         {
             tree->type = T_NUM;
             tree->data.value = 0;
@@ -148,30 +145,30 @@ void remove_neutral_elements (struct Node* tree, int* changed)
 
             *changed = 1;
         }
-        else if (tree->left->type == T_NUM && double_compare (tree->left->data.value, one))//tree->left->data.value == 1)
+        else if (tree->left->type == T_NUM && tree->left->data.value == 1)
         {
             SUBTREE_DTOR (tree->left);
             memcpy (tree, tree->right, sizeof (struct Node));
             *changed = 1;
         }
 
-        else if (tree->right->type == T_NUM && double_compare (tree->right->data.value, one))//tree->right->data.value == 1)
+        else if (tree->right->type == T_NUM && tree->right->data.value == 1)
         {
             SUBTREE_DTOR (tree->right);
             memcpy (tree, tree->left, sizeof (struct Node));
             *changed = 1;
         }
     }
-    else if (tree->data.operation == '+')
+    else if (tree->data.op == '+')
     {
-        if (tree->left->type == T_NUM && double_compare (tree->left->data.value, zero))
+        if (tree->left->type == T_NUM && tree->left->data.value == 0)
         {
             SUBTREE_DTOR (tree->left);
             memcpy (tree, tree->right, sizeof (struct Node));
             *changed += 1;
         }
 
-        else if (tree->right->type == T_NUM && double_compare (tree->right->data.value, zero))
+        else if (tree->right->type == T_NUM && tree->right->data.value == 0)
         {
             SUBTREE_DTOR (tree->right);
             memcpy (tree, tree->left, sizeof (struct Node));
