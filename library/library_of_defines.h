@@ -50,85 +50,49 @@
     }                           \
     while (0)
 
-#define ADD_DIFF(node)                                                                     \
-    {                                                                                      \
-        unsigned char add = '+';                                                           \
-        return create_node (T_OP, &add, diff (node->left, var), diff (node->right, var));  \
-    }
+#define INCREASE_CAPACITY(...)                                                  \
+        tokens->capacity *= 2;                                                  \
+        REALLOC (tokens->array_tokens, struct Token, tokens->capacity);
 
-#define SUB_DIFF(node)                                                                     \
-    {                                                                                      \
-        unsigned char sub = '-';                                                           \
-        return create_node (T_OP, &sub, diff (node->left, var), diff (node->right, var));  \
-    }
+#define ADD_FUNCTION(...)                                                               \
+        tokens->array_tokens[tokens->size].type = OP_L;                                 \
+        CALLOC (tokens->array_tokens[tokens->size].data.op_long, char, MAX_STR_SIZE);   \
+        strcpy (tokens->array_tokens[tokens->size].data.op_long, str);                  \
+        printf ("[%s]\n", tokens->array_tokens[tokens->size].data.op_long);             \
+        tokens->size += 1;
 
-#define MUL_DIFF(node)                                                       \
-    {                                                                        \
-        unsigned char mul = '*', add = '+';                                  \
-                                                                             \
-        struct Node* du = diff (node->left, var);                            \
-        struct Node* u  = copy_subtree (node->left);                         \
-                                                                             \
-        struct Node* dv = diff (node->right, var);                           \
-        struct Node* v  = copy_subtree (node->right);                        \
-                                                                             \
-        return create_node (T_OP, &add, create_node (T_OP, &mul, du, v),     \
-                                        create_node (T_OP, &mul, u, dv));    \
-    }
+#define ADD_VARIABLE(...)                                                           \
+        tokens->array_tokens[tokens->size].type = VAR;                              \
+        CALLOC (tokens->array_tokens[tokens->size].data.var, char, MAX_STR_SIZE);   \
+        strcpy (tokens->array_tokens[tokens->size].data.var, str);                  \
+        printf ("var [%s]\n", tokens->array_tokens[tokens->size].data.var);         \
+        tokens->size += 1;
 
-#define DIV_DIFF(node)                                                                      \
-    {                                                                                       \
-        unsigned char mul = '*', sub = '-', div = '/';                                      \
-        struct Node* du = diff (node->left, var);                                           \
-        struct Node* u  = copy_subtree (node->left);                                        \
-        struct Node* dv = diff (node->right, var);                                          \
-        struct Node* v  = copy_subtree (node->right);                                       \
-                                                                                            \
-        struct Node* nominator = create_node (T_OP, &sub, create_node (T_OP, &mul, du, v),  \
-                                                          create_node (T_OP, &mul, u, dv)); \
-        struct Node* denominator = create_node (T_OP, &mul, copy_subtree (u),               \
-                                                            copy_subtree (u));              \
-        return create_node (T_OP, &div, nominator, denominator);                            \
-    }
+#define ADD_NUMBER(...)                                                                                   \
+        tokens->array_tokens[tokens->size].type = NUM;                                                    \
+        tokens->array_tokens[tokens->size].data.value = 0;                                                \
+        int prev_num = 0;                                                                                 \
+        while ('0' <= text_data[ptr] && text_data[ptr] <= '9')                                            \
+        {                                                                                                 \
+            prev_num = tokens->array_tokens[tokens->size].data.value;                                     \
+            tokens->array_tokens[tokens->size].data.value = prev_num * 10 + (text_data[ptr] - '0');       \
+            ptr++;                                                                                        \
+        }                                                                                                 \
+        printf ("[%d]\n", tokens->array_tokens[tokens->size].data.value);                                 \
+        tokens->size += 1;
 
-#define LN_DIFF(node)                                                                                   \
-    {                                                                                                   \
-        unsigned char mul = '*', div = '/';                                                             \
-        double value = 1;                                                                               \
-        struct Node* val = copy_subtree (node->left);                                                   \
-        struct Node* dln = create_node (T_OP, &div,  create_node (T_NUM, &value, NULL, NULL), val);     \
-        return create_node (T_OP, &mul, dln, diff (node->left, var));                                   \
-    }
+#define ADD_END_OF_FILE(...)                                                \
+        tokens->array_tokens[tokens->size].type = END;                      \
+        tokens->array_tokens[tokens->size].data.br_o = '\0';                \
+        printf ("[%c]\n", tokens->array_tokens[tokens->size].data.end);     \
+        tokens->size += 1;                                                  \
+        break;
 
-#define SIN_DIFF(node)                                                                                  \
-    {                                                                                                   \
-        unsigned char mul = '*';                                                                        \
-        char* cos = "cos";                                                                              \
-        struct Node* val = copy_subtree (node->left);                                                   \
-        struct Node* dsin = create_node (T_OP_LONG, cos, val, NULL);                                    \
-        return create_node (T_OP, &mul, dsin, diff (node->left, var));                                  \
-    }
+#define ADD_TOKEN(token_t, data_type, elem)                              \
+    tokens->array_tokens[tokens->size].type = token_t;                   \
+    tokens->array_tokens[tokens->size].data.data_type = elem;                 \
+    tokens->size += 1;                                                   \
+    ptr++;
 
-#define COS_DIFF(node)                                                                                  \
-    {                                                                                                   \
-        printf ("diff cos\n");                                                                          \
-        unsigned char mul = '*', sub = '-';                                                             \
-        double value = 0;                                                                               \
-        char* sin = "sin";                                                                              \
-        struct Node* val_1 = copy_subtree (node->left);                                                 \
-        struct Node* val_2 = create_node (T_OP_LONG, sin, val_1, NULL);                                 \
-        struct Node* dcos = create_node (T_OP, &mul, val_2, diff (node->left, var));                    \
-        return create_node (T_OP, &sub, create_node (T_NUM, &value, NULL, NULL), dcos);                 \
-    }
-
-#define EXP_DIFF(node)                                                                                  \
-    {                                                                                                   \
-        unsigned char mul = '*';                                                                        \
-        Node* val = copy_subtree (node);                                                                \
-        Node* res = create_node (T_OP, &mul, val, diff (node->left, var));                              \
-        return res;                                                                                     \
-    }
-
-#
 
 #endif // DSL_H_INCLUDED
