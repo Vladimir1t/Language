@@ -13,7 +13,7 @@
 #define REALLOC(elem, type, size)                            \
     do                                                       \
     {                                                        \
-        void* clTmp = realloc (elem, size * sizeof (type));  \
+        void* clTmp = realloc (elem, (size) * sizeof (type));  \
         if (clTmp == NULL)                                   \
             return REALLOC_ERROR;                            \
         elem = (type*) clTmp;                                \
@@ -41,12 +41,6 @@
         CALLOC (next, Node, 1);      \
     }                                \
     while(0)
-
-#define COMPARE_DOUBLES(double_1, double_2)              \
-    {                                                    \
-        const double EPSILON = 0.00001;                  \
-        return (fabs double - double) <= EPSILON);       \
-    }
 
 #define SUBTREE_DTOR(node)      \
     do                          \
@@ -134,5 +128,7 @@
         Node* res = create_node (T_OP, &mul, val, diff (node->left, var));                              \
         return res;                                                                                     \
     }
+
+#
 
 #endif // DSL_H_INCLUDED

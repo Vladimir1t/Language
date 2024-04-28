@@ -2,6 +2,7 @@
 #define SIMPLIFIER_H_INCLUDED
 
 #include "parcer.h"
+#include "..\library\commands.h"
 
 double calculator (struct Node* tree, int* is_var_in_subtree);
 
