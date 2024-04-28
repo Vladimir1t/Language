@@ -12,8 +12,6 @@
 #include "..\library\commands.h"
 #include "simplifier.h"
 
-const int MAX_STR_SIZE = 20;
-
 enum POSITION
 {
     LEFT  = 0,
@@ -21,13 +19,27 @@ enum POSITION
     ROOT  = 2,
 };
 
+enum token_t
+{
+    OP    = 1,
+    KEY_W = 2,
+    BR_C  = 3,
+    BR_O  = 4,
+    NUM   = 5,
+    VAR   = 6,
+    OP_L  = 7,
+    CBR_C = 8,
+    CBR_O = 9,
+    END   = 10,
+};
+
 union node_data
 {
-    unsigned char operation;       // +, -, * etc
-    unsigned char key_word;        // =, {, } etc
-    double        value;           // double number
-    char*         var;             // x, y, z, var etc
-    char*         operation_long;  // sin, cos, ln etc
+    unsigned char op;       // +, -, * etc
+    unsigned char key_w;    // =, {, } etc
+    int           value;    // double number
+    char*         var;      // x, y, z, var etc
+    char*         op_long;  // sin, cos, ln etc
 };
 
 struct Node
@@ -39,25 +51,52 @@ struct Node
     int          num_in_tree;
 };
 
+union Data
+{
+    unsigned char op;      // +, -, * etc
+    unsigned char key_w;   // =, ; etc
+    unsigned char br_o;    // {, (
+    unsigned char br_c;    // }, )
+    int           value;   // double number
+    char*         var;     // x, y, z, var etc
+    char*         op_long; // sin, cos, ln etc
+    char          end;     // \0
+};
+
+struct Token
+{
+    token_t    type;
+    union Data data;
+};
+
+struct Tokens
+{
+    struct Token* array_tokens;
+    size_t        size;
+    size_t        capacity;
+};
+
 int get_database (struct Node** root, char* sourse_file);
 
-struct Node* get_g (const char* text_data);
+struct Node* get_g (struct Tokens* tokens, size_t* ptr);
 
-struct Node* get_equation (char** ptr);
+struct Node* get_equation (struct Tokens* tokens, size_t* ptr);
 
-struct Node* get_ass (char** ptr);
+struct Node* get_ass (struct Tokens* tokens, size_t* ptr);
 
-struct Node* get_e (char** ptr);
+struct Node* get_e (struct Tokens* tokens, size_t* ptr);
 
-struct Node* get_t (char** ptr);
+struct Node* get_t (struct Tokens* tokens, size_t* ptr);
 
-struct Node* get_p (char** ptr);
+struct Node* get_p (struct Tokens* tokens, size_t* ptr);
 
-struct Node* get_f (char** ptr);
+struct Node* get_pow (struct Tokens* tokens, size_t* ptr);
 
-struct Node* get_n (char** ptr);
+struct Node* get_f (struct Tokens* tokens, size_t* ptr);
 
-struct Node* get_var (char** ptr);
+struct Node* get_n (struct Tokens* tokens, size_t* ptr);
+
+struct Node* get_var (struct Tokens* tokens, size_t* ptr);
 
 struct Node* syntax_error ();
 
