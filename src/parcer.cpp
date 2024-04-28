@@ -10,7 +10,7 @@ static int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_
 
 static int add_connection_in_graph (struct Node* node, FILE* file_graph);
 
-static void skip_symbols (char** ptr);
+static void dump_node (struct Node *tree);
 
 int get_database (struct Node** root, char* sourse_file)       // get data of tree in the following file
 {
@@ -30,7 +30,6 @@ int get_database (struct Node** root, char* sourse_file)       // get data of tr
         return ERROR;
     }
     fclose (file_p);
-    //text_data[file_size] = '$'; //
 
     struct Tokens tokens = {0};
     get_tokens (&tokens, text_data);
@@ -43,6 +42,9 @@ int get_database (struct Node** root, char* sourse_file)       // get data of tr
 
     if (root == NULL)
         return ERROR;
+
+    free (text_data);
+    free (tokens.array_tokens);
 
     return SUCCESS;
 }
@@ -72,8 +74,7 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
     {
         if (tokens->size == tokens->capacity)
         {
-            tokens->capacity *= 2;
-            REALLOC (tokens->array_tokens, struct Token, tokens->capacity);
+            INCREASE_CAPACITY (tokens);
         }
         if (isalpha(text_data[ptr]))
         {
@@ -87,159 +88,70 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
                 for (int j = 0; j < OP_NUM; j++)
                     if (!strcmp (str, array_op[j].name))
                     {
-                        tokens->array_tokens[tokens->size].type = OP_L;
-                        CALLOC (tokens->array_tokens[tokens->size].data.op_long, char, MAX_STR_SIZE);
-                        strcpy (tokens->array_tokens[tokens->size].data.op_long, str);
-                        printf ("[%s]\n", tokens->array_tokens[tokens->size].data.op_long);
-                        tokens->size += 1;
+                        ADD_FUNCTION (tokens);
                     }
-                //
             }
             else
             {
-                tokens->array_tokens[tokens->size].type = VAR;
-                CALLOC (tokens->array_tokens[tokens->size].data.var, char, MAX_STR_SIZE);
-                strcpy (tokens->array_tokens[tokens->size].data.var, str);
-                printf ("var [%s]\n", tokens->array_tokens[tokens->size].data.var);
-                printf ("..%d..\n", tokens->array_tokens[tokens->size].type);
-
-                tokens->size += 1;
+                ADD_VARIABLE (tokens);
             }
         }
         else if (isdigit (text_data[ptr]))
         {
-            tokens->array_tokens[tokens->size].type = NUM;
-            tokens->array_tokens[tokens->size].data.value = 0; //
-            while ('0' <= text_data[ptr] && text_data[ptr] <= '9')
-            {
-                //printf ("ok\n");
-                //printf ("..%c..\n", text_data[ptr]);
-                //if (sign == '+')
-                tokens->array_tokens[tokens->size].data.value = tokens->array_tokens[tokens->size].data.value * 10 + (text_data[ptr] - '0');
-
-                ptr++;
-            }
-
-            printf ("[%d]\n", tokens->array_tokens[tokens->size].data.value);
-            tokens->size += 1;
+            ADD_NUMBER (tokens);
         }
-        else if (text_data[ptr] == ' ')
+        else if (text_data[ptr] == ' ' || text_data[ptr] == '\n' || text_data[ptr] == '\r')
             ptr++;
 
         else if (text_data[ptr] == '\0')
         {
-            tokens->array_tokens[tokens->size].type = END;
-            tokens->array_tokens[tokens->size].data.br_o = '\0';
-            printf ("[%c]\n", tokens->array_tokens[tokens->size].data.end);
-            tokens->size += 1;
-            break;
+            ADD_END_OF_FILE (tokens);
         }
-
         else
         {
-            /*switch (text_data[ptr])
+            if (text_data[ptr] == '{')
             {
-                case '{':*/
-                if (text_data[ptr] == '{')
-                {
-                    tokens->array_tokens[tokens->size].type = CBR_O;
-                    tokens->array_tokens[tokens->size].data.br_o = '{';
-                    printf ("[%c]\n", tokens->array_tokens[tokens->size].data.br_o);
-                    tokens->size += 1;
-                    ptr++;
-                    //break;
-                }
-
-                else if (text_data[ptr] == '}')
-                {
-                    tokens->array_tokens[tokens->size].type = CBR_C;
-                    tokens->array_tokens[tokens->size].data.br_c = '}';
-                    printf ("[%c]\n", tokens->array_tokens[tokens->size].data.br_c);
-                    tokens->size += 1;
-                    ptr++;
-                    //break;
-                }
-
-                else if (text_data[ptr] == '(')
-                {
-                    tokens->array_tokens[tokens->size].type = BR_O;
-                    tokens->array_tokens[tokens->size].data.br_c = '(';
-                    printf ("[%c]\n", tokens->array_tokens[tokens->size].data.br_o);
-                    tokens->size += 1;
-                    ptr++;
-                    //break;
-                }
-
-                else if (text_data[ptr] == ')')
-                {
-                    tokens->array_tokens[tokens->size].type = BR_C;
-                    tokens->array_tokens[tokens->size].data.br_c = ')';
-                    printf ("[%c]\n", tokens->array_tokens[tokens->size].data.br_c);
-                    tokens->size += 1;
-                    ptr++;
-                    //break;
-                }
-
-                else if (text_data[ptr] == ';')
-                {
-                    tokens->array_tokens[tokens->size].type = KEY_W;
-                    tokens->array_tokens[tokens->size].data.br_c = text_data[ptr];
-                    printf ("[%c]\n", tokens->array_tokens[tokens->size].data.key_w);
-                    //tokens->size += 1;
-                    //ptr++;
-                    tokens->size += 1;
-                    ptr++;
-                    //break;
-                }
-
-                else if (text_data[ptr] == '=')
-                {
-                    tokens->array_tokens[tokens->size].type = KEY_W;
-                    tokens->array_tokens[tokens->size].data.br_c = text_data[ptr];
-                    printf ("[%c]\n", tokens->array_tokens[tokens->size].data.key_w);
-                    //tokens->size += 1;
-                    //ptr++;
-                    tokens->size += 1;
-                    ptr++;
-                    //break;
-                }
-
-                else if (text_data[ptr] == '+' || text_data[ptr] == '-' || text_data[ptr] == '*' || text_data[ptr] == '/' || text_data[ptr] == '^')
-                {
-                    tokens->array_tokens[tokens->size].type = OP;
-                    tokens->array_tokens[tokens->size].data.op = text_data[ptr];
-                    printf ("[%c]\n", tokens->array_tokens[tokens->size].data.op);
-                    tokens->size += 1;
-                    ptr++;
-                   // break;
-                }
-
-                else
-                    ptr++;
-
-            //}
-            //printf ("jjlk %c\n", text_data[ptr]);
+                ADD_TOKEN (CBR_O, br_o, text_data[ptr]);
+            }
+            else if (text_data[ptr] == '}')
+            {
+                ADD_TOKEN (CBR_C, br_c, text_data[ptr]);
+            }
+            else if (text_data[ptr] == '(')
+            {
+                ADD_TOKEN (BR_O, br_o, text_data[ptr]);
+            }
+            else if (text_data[ptr] == ')')
+            {
+                ADD_TOKEN (BR_C, br_c, text_data[ptr]);
+            }
+            else if (text_data[ptr] == '=' || text_data[ptr] == ';')
+            {
+                ADD_TOKEN (KEY_W, key_w, text_data[ptr]);
+            }
+            else if (text_data[ptr] == '+' || text_data[ptr] == '-' || text_data[ptr] == '*' || text_data[ptr] == '/' || text_data[ptr] == '^')
+            {
+                ADD_TOKEN (OP, op, text_data[ptr]);
+            }
+            else
+                return ERROR;
         }
     }
 
     return SUCCESS;
 }
 
-void skip_symbols (char** ptr)
-{
-    while (**ptr == ' ' || **ptr == '\n' || **ptr == '\r')
-        *ptr += 1;
-}
-
 struct Node* get_g (struct Tokens* tokens, size_t* ptr)
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("G\n");
 
     struct Node* value = get_equation (tokens, ptr);
 
     if (tokens->array_tokens[*ptr].type == END)
         *ptr += 1;
-
     else
         return syntax_error ();
 
@@ -248,11 +160,14 @@ struct Node* get_g (struct Tokens* tokens, size_t* ptr)
 
 struct Node* get_equation (struct Tokens* tokens, size_t* ptr)
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("Eq\n");
     unsigned char str_end = ';';
     struct Node*  value_1 = get_ass (tokens, ptr);
     struct Node*  value_2 = NULL;
-    printf ("first\n");
+
     while (tokens->array_tokens[*ptr].type == KEY_W && tokens->array_tokens[*ptr].data.key_w == ';')
     {
         *ptr += 1;
@@ -266,6 +181,9 @@ struct Node* get_equation (struct Tokens* tokens, size_t* ptr)
 
 struct Node* get_ass (struct Tokens* tokens, size_t* ptr)
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("Ass\n");
     struct Node* value_1 = NULL;
     struct Node* value_2 = NULL;
@@ -293,6 +211,9 @@ struct Node* get_ass (struct Tokens* tokens, size_t* ptr)
 
 struct Node* get_e (struct Tokens* tokens, size_t* ptr)    //  + or -
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("E\n");
     struct Node* value_1 = get_t (tokens, ptr);
 
@@ -320,12 +241,15 @@ struct Node* get_e (struct Tokens* tokens, size_t* ptr)    //  + or -
 
 struct Node* get_t (struct Tokens* tokens, size_t* ptr)   //   * or /
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("T\n");
     struct Node* value_1 = get_p (tokens, ptr);
 
     while (tokens->array_tokens[*ptr].data.op == '*' || tokens->array_tokens[*ptr].data.op == '/')
     {
-        printf ("{*}\n");
+        //printf ("{*}\n");
         const char op = tokens->array_tokens[*ptr].data.op;
         *ptr += 1;
         struct Node* value_2 = get_p (tokens, ptr);
@@ -348,15 +272,18 @@ struct Node* get_t (struct Tokens* tokens, size_t* ptr)   //   * or /
 
 struct Node* get_p (struct Tokens* tokens, size_t* ptr)   //  (, )  and determine functions
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("P\n");
     struct Node* value = NULL;
-    printf ("{%d}\n", tokens->array_tokens[*ptr].type);
+    //printf ("{%d}\n", tokens->array_tokens[*ptr].type);
     if (tokens->array_tokens[*ptr].data.br_o  == '(')
     {
         *ptr += 1;
         value = get_e (tokens, ptr);
 
-        if (tokens->array_tokens[*ptr].data.br_c  == ')') // ?
+        if (tokens->array_tokens[*ptr].data.br_c  == ')')
         {
             *ptr += 1;
             if (tokens->array_tokens[*ptr].data.op == '^')
@@ -379,6 +306,9 @@ struct Node* get_p (struct Tokens* tokens, size_t* ptr)   //  (, )  and determin
 
 struct Node* get_pow (struct Tokens* tokens, size_t* ptr)
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("Pow\n");
     struct Node* value = NULL;
     *ptr += 1;
@@ -399,29 +329,12 @@ struct Node* get_pow (struct Tokens* tokens, size_t* ptr)
 
 struct Node* get_f (struct Tokens* tokens, size_t* ptr)
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("F\n");
     struct Node* value = NULL;
-    //char str[MAX_STR_SIZE] = {0};
-    //int i = 0;
-    /*while (isalpha (**ptr))
-    {
-        str[i++] = **ptr;
-        *ptr += 1;
-    }
 
-    if (**ptr == '(')             // function
-    {
-        for (int j = 0; j < OP_NUM; j++)
-           if (!strcmp (str, array_op[j].name))
-           {
-                value = get_p (ptr);
-                value = create_node (T_OP_LONG, array_op[j].name, value, NULL);
-                return value;
-           }
-        return syntax_error ();
-    }
-    else if (isdigit (**ptr))
-        return syntax_error ();*/
     if (tokens->array_tokens[*ptr].type == OP_L)
     {
         char* op_long = tokens->array_tokens[*ptr].data.op_long;
@@ -435,27 +348,18 @@ struct Node* get_f (struct Tokens* tokens, size_t* ptr)
         value = create_node (T_VAR, tokens->array_tokens[*ptr].data.var, NULL, NULL);
         *ptr += 1;
     }
+
     return value;
 }
 
 struct Node* get_var (struct Tokens* tokens, size_t* ptr)
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("Var\n");
     struct Node* value = NULL;
-    //char str[MAX_STR_SIZE] = {0};
-    //int i = 0;
 
-    /*while (isalpha (**ptr))
-    {
-        str[i++] = **ptr;
-        *ptr += 1;
-    }
-    if (strlen (str) == 0)
-        return NULL;
-
-    else   // variable*/
-    //tokens->array_tokens[*ptr].type = VAR;
-    printf ("{%d}\n", tokens->array_tokens[*ptr].type);
     //printf ("{var %s}\n", tokens->array_tokens[*ptr].data.var);
     if (tokens->array_tokens[*ptr].type == VAR)
     {
@@ -468,33 +372,13 @@ struct Node* get_var (struct Tokens* tokens, size_t* ptr)
 
 struct Node* get_n (struct Tokens* tokens, size_t* ptr)   //determine numbers and variables
 {
+    assert (tokens != NULL);
+    assert (ptr != NULL);
+
     printf ("N\n");
-    //const char* old_ptr = *ptr;
     printf ("{value %d}\n", tokens->array_tokens[*ptr].data.value);
     struct Node* value = (struct Node*) calloc (1, sizeof (struct Node));
 
-    /*if (isdigit (**ptr))
-    {
-        value->type = T_NUM;
-
-        char sign = '+';
-        if (**ptr == '-')
-            sign = '-';
-
-        while ('0'<= **ptr && **ptr <= '9')
-        {
-            if (sign == '+')
-                value->data.value = value->data.value * 10 + (**ptr - '0');
-            else
-                value->data.value = value->data.value * 10 - (**ptr - '0');
-            *ptr += 1;
-        }
-    }
-    else
-        syntax_error ();
-
-    if (*ptr == old_ptr)
-        return syntax_error ();*/
     if (tokens->array_tokens[*ptr].type == NUM)
     {
         value->type = T_NUM;
@@ -505,7 +389,7 @@ struct Node* get_n (struct Tokens* tokens, size_t* ptr)   //determine numbers an
     else
         syntax_error ();
 
-    printf ("ok\n");
+    //printf ("ok\n");
     return value;
 }
 
@@ -519,6 +403,8 @@ struct Node* syntax_error ()
 
 struct Node* create_node (Class_type type, void* data, struct Node* left, struct Node* right)
 {
+    assert (data != NULL);
+
     struct Node* new_node = (struct Node*) calloc (1, sizeof (struct Node));
 
     new_node->type = type;
@@ -559,6 +445,9 @@ struct Node* create_node (Class_type type, void* data, struct Node* left, struct
 
 int build_graphviz (struct Node* root, const char* file_name)
 {
+    CHECK_PTR (root);
+    CHECK_PTR (file_name);
+
     size_t node_num = 0;
     if (root == NULL)
         return ERROR;
@@ -581,8 +470,11 @@ int build_graphviz (struct Node* root, const char* file_name)
     return SUCCESS;
 }
 
-static int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
+int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (file_graph);
+
     if (node->right == NULL && node->left == NULL)
     {
         if (node->type == T_VAR)
@@ -619,8 +511,11 @@ static int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_
     return SUCCESS;
 }
 
-static int add_connection_in_graph (struct Node* node, FILE* file_graph)
+int add_connection_in_graph (struct Node* node, FILE* file_graph)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (file_graph);
+
     if (node->left != NULL)
     {
         fprintf (file_graph, "%d -> %d[ color = Peru ];\n", node->num_in_tree, (node->left)->num_in_tree);
@@ -638,16 +533,19 @@ static int add_connection_in_graph (struct Node* node, FILE* file_graph)
 
 int tree_output (struct Node* node, FILE* file_output)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (file_output);
+
     if (node->left != NULL)
         tree_output (node->left, file_output);
 
     //dump_node (node);
     if (node->type == T_VAR)
-        fprintf (file_output, "( %c ", node->data.var);
+        fprintf (file_output, "( %s ", node->data.var);
     else if (node->type == T_OP)
         fprintf (file_output, " %c ", node->data.op);
     else if (node->type == T_NUM)
-        fprintf (file_output, "( %lf ", node->data.value);
+        fprintf (file_output, "( %d ", node->data.value);
 
     fprintf (file_output, ")");
 
@@ -663,11 +561,11 @@ void dump_node (struct Node *tree)
     printf ("type - %d\n", tree->type);
 
     if (tree->type == T_NUM)
-        printf ("# %lf #", tree->data.value);
+        printf ("# %d #", tree->data.value);
     else if (tree->type == T_OP)
         printf ("# %c #", tree->data.op);
     else if (tree->type == T_VAR)
-        printf ("# %c #", tree->data.var);
+        printf ("# %s #", tree->data.var);
 
     printf ("\n--------------------------------\n");
 }
