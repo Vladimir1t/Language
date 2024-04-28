@@ -4,7 +4,7 @@
 #include "parcer.h"
 #include "..\library\commands.h"
 
-double calculator (struct Node* tree, int* is_var_in_subtree);
+int calculator (struct Node* tree, int* is_var_in_subtree);
 
 struct Node* copy_subtree (const struct Node* node);
 

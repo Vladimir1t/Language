@@ -6,6 +6,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include "..\library\errors.h"
 #include "..\library\library_of_defines.h"

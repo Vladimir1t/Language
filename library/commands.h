@@ -77,6 +77,6 @@ static struct variable array_vr[] =
     {"z", 0},
 };
 
-static int var_num = sizeof (array_vr) / sizeof (array_vr[0]);
+//static int var_num = sizeof (array_vr) / sizeof (array_vr[0]);
 
 #endif // COMMANDS_H_INCLUDED
