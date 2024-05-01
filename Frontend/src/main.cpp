@@ -1,11 +1,12 @@
 #include "..\include\parcer.h"
 
-
 int main (int argc, char* argv[])
 {
-    FOPEN (file_output, "file_output.txt", "w");
+    FOPEN (file_output, "text_files\\file_output.txt", "w");
     struct Node* root = NULL;
-    printf ("\n-- LANGUAGE --\n\n");
+
+    printf ("\n------- LANGUAGE -------\n\n");
+
     if (get_database (&root, argv[1]) != SUCCESS)
         return 0;
 
@@ -41,10 +42,7 @@ int main (int argc, char* argv[])
         }
         clean_buffer ();
     }
-
-    //simplifier (root);
-
-    //struct Node* diff_tree = run_differentiator (root, file_output);
+    tree_output (root, file_output);
 
     tree_dtor (root);
 

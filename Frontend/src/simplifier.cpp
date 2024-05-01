@@ -1,6 +1,6 @@
 #include "..\include\simplifier.h"
 
-static FILE* error_file = fopen ("log\\error_file_simplifier.txt", "w");
+static FILE* error_file = fopen ("Frontend\\log\\error_file_simplifier.txt", "w");
 
 static Class_operation long_op_determinator (char* operation);
 

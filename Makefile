@@ -8,26 +8,31 @@ FLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equa
 	-Wwrite-strings -D_DEBUG -D_EJUDGE_CLIENT_SIDE
 
 TARGET = Language
+CC = g++
 
+# Frontend
 front: frontend
-	frontend.exe text_files\sourse_file.txt
+	Frontend\frontend.exe text_files\sourse_file.txt
 
-frontend: main.o parcer.o simplifier.o
-	g++ -o frontend main.o parcer.o simplifier.o
+frontend: Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
+	$(CC) -o Frontend\frontend Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
 
-#back:
+Frontend\main.o:  Frontend\src\main.cpp
+	$(CC) Frontend\src\main.cpp -c  $(FLAGS)
 
-main.o: src\main.cpp
-	g++ -c src\main.cpp $(FLAGS)
+Frontend\input_output.o:  Frontend\src\input_output.cpp
+	$(CC) Frontend\src\input_output.cpp -c  $(FLAGS)
 
-parcer.o: src\parcer.cpp
-	g++ -c src\parcer.cpp $(FLAGS)
+ Frontend\parcer.o:  Frontend\src\parcer.cpp
+	$(CC) -c Frontend\parcer Frontend\src\parcer.cpp $(FLAGS)
 
-simplifier.o: src\simplifier.cpp
-	g++ -c src\simplifier.cpp $(FLAGS)
+ Frontend\simplifier.o:  Frontend\src\simplifier.cpp
+	$(CC) -c Frontend\simplifier Frontend\src\simplifier.cpp $(FLAGS)
+
+# Backend
 
 #src\input_output.o:  src\input_output.cpp
 #	g++ -c src\input_output.cpp $(FLAGS)
 
-claen:
+clean:
 	rm $(TARGET) *-o

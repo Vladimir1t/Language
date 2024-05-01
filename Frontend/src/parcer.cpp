@@ -1,16 +1,32 @@
 #include "..\include\parcer.h"
 
-static FILE* error_file = fopen ("log\\parcer_error.txt", "w");
+static FILE* error_file = fopen ("Frontend\\log\\parcer_error.txt", "w");
 
 static int get_tokens (struct Tokens* tokens, const char* text_data);
 
+static struct Node* get_g (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_equation (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_ass (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_e (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_t (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_p (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_pow (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_f (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_n (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* get_var (struct Tokens* tokens, size_t* ptr);
+
+static struct Node* syntax_error ();
+
 static size_t file_size_measure (FILE* const file_p);
-
-static int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num);
-
-static int add_connection_in_graph (struct Node* node, FILE* file_graph);
-
-static void dump_node (struct Node *tree);
 
 int get_database (struct Node** root, char* sourse_file)       // get data of tree in the following file
 {
@@ -418,6 +434,14 @@ struct Node* create_node (Class_type type, void* data, struct Node* left, struct
             new_node->data.op = *(unsigned char*) data;
             break;
 
+        case T_CBR_O:
+            new_node->data.br_o = *(unsigned char*) data;
+            break;
+
+        case T_CBR_C:
+            new_node->data.br_c = *(unsigned char*) data;
+            break;
+
         case T_VAR:
             new_node->data.var = (char*) calloc (MAX_STR_SIZE, sizeof (char));
             strcpy (new_node->data.var, (char*) data);
@@ -442,153 +466,3 @@ struct Node* create_node (Class_type type, void* data, struct Node* left, struct
 
     return new_node;
 }
-
-int build_graphviz (struct Node* root, const char* file_name)
-{
-    CHECK_PTR (root);
-    CHECK_PTR (file_name);
-
-    size_t node_num = 0;
-    if (root == NULL)
-        return ERROR;
-
-    FOPEN (file_graph, file_name, "w");
-
-    fprintf (file_graph, "digraph LANGUAGE{\n"
-                         "label = < LANGUAGE >;\n"
-                         "bgcolor = \"#BAF0EC\";\n"
-                         "node [shape = record ];\n"
-                         "edge [style = filled ];\n");
-
-        /*   create a tree in graphviz   */
-    add_node_in_graph (root, file_graph, &node_num);
-    add_connection_in_graph (root, file_graph);
-    fprintf (file_graph, "}");
-
-    fclose (file_graph);
-
-    return SUCCESS;
-}
-
-int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
-{
-    CHECK_PTR (node);
-    CHECK_PTR (file_graph);
-
-    if (node->right == NULL && node->left == NULL)
-    {
-        if (node->type == T_VAR)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = YellowGreen, label = \"%s\" ];\n", *node_num, node->data.var);
-
-        else if (node->type == T_NUM)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = YellowGreen, label = \"%d\" ];\n", *node_num, node->data.value);
-    }
-    else
-    {
-        if (node->type == T_OP)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%c\" ];\n", *node_num, node->data.op);
-
-        else if (node->type == T_OP_LONG)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%s\" ];\n", *node_num, node->data.op_long);
-
-        else if (node->type == T_KEY_W)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%c\" ];\n", *node_num, node->data.key_w);
-    }
-
-    node->num_in_tree = *node_num;
-    if (node->left != NULL)
-    {
-        *node_num += 1;
-        add_node_in_graph (node->left, file_graph, node_num);
-    }
-
-    if (node->right != NULL)
-    {
-        *node_num += 1;
-        add_node_in_graph (node->right, file_graph, node_num);
-    }
-
-    return SUCCESS;
-}
-
-int add_connection_in_graph (struct Node* node, FILE* file_graph)
-{
-    CHECK_PTR (node);
-    CHECK_PTR (file_graph);
-
-    if (node->left != NULL)
-    {
-        fprintf (file_graph, "%d -> %d[ color = Peru ];\n", node->num_in_tree, (node->left)->num_in_tree);
-        add_connection_in_graph (node->left, file_graph);
-    }
-
-    if (node->right != NULL && node->right->type != DEFUALT)
-    {
-        fprintf (file_graph, "%d -> %d[ color = Peru ];\n", node->num_in_tree, (node->right)->num_in_tree);
-        add_connection_in_graph (node->right, file_graph);
-    }
-
-    return SUCCESS;
-}
-
-int tree_output (struct Node* node, FILE* file_output)
-{
-    CHECK_PTR (node);
-    CHECK_PTR (file_output);
-
-    if (node->left != NULL)
-        tree_output (node->left, file_output);
-
-    //dump_node (node);
-    if (node->type == T_VAR)
-        fprintf (file_output, "( %s ", node->data.var);
-    else if (node->type == T_OP)
-        fprintf (file_output, " %c ", node->data.op);
-    else if (node->type == T_NUM)
-        fprintf (file_output, "( %d ", node->data.value);
-
-    fprintf (file_output, ")");
-
-    if (node->right != NULL)
-        tree_output (node->right, file_output);
-
-    return 0;
-}
-
-void dump_node (struct Node *tree)
-{
-    printf ("\n---------------NODE-------------\n");
-    printf ("type - %d\n", tree->type);
-
-    if (tree->type == T_NUM)
-        printf ("# %d #", tree->data.value);
-    else if (tree->type == T_OP)
-        printf ("# %c #", tree->data.op);
-    else if (tree->type == T_VAR)
-        printf ("# %s #", tree->data.var);
-
-    printf ("\n--------------------------------\n");
-}
-
-void tree_dtor (struct Node* node)
-{
-    if (node->left != NULL)
-        tree_dtor (node->left);
-
-    if (node->right != NULL)
-        tree_dtor (node->right);
-
-    free (node);
-}
-
-void clean_buffer ()
-{
-    int symbol = 0;
-    do
-    {
-        symbol = getchar ();
-    }
-    while (symbol != '\n' && symbol != EOF);
-}
-
-

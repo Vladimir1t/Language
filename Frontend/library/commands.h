@@ -11,6 +11,8 @@ enum Class_type
     T_OP      =  2,
     T_OP_LONG =  3,
     T_KEY_W   =  4,
+    T_CBR_O   =  5,
+    T_CBR_C   =  6,
     DEFUALT   = -1,
 };
 

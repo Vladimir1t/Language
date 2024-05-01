@@ -37,7 +37,9 @@ enum token_t
 union node_data
 {
     unsigned char op;       // +, -, * etc
-    unsigned char key_w;    // =, {, } etc
+    unsigned char key_w;    // =, ; etc
+    unsigned char br_o;     // {, (
+    unsigned char br_c;     // }, )
     int           value;    // double number
     char*         var;      // x, y, z, var etc
     char*         op_long;  // sin, cos, ln etc
@@ -79,31 +81,11 @@ struct Tokens
 
 int get_database (struct Node** root, char* sourse_file);
 
-struct Node* get_g (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_equation (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_ass (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_e (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_t (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_p (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_pow (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_f (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_n (struct Tokens* tokens, size_t* ptr);
-
-struct Node* get_var (struct Tokens* tokens, size_t* ptr);
-
-struct Node* syntax_error ();
-
 struct Node* create_node (Class_type type, void* data, struct Node* left, struct Node* right);
 
 int build_graphviz (struct Node* root, const char* file_name);
+
+int tree_output (struct Node* node, FILE* file_output);
 
 void tree_dtor (struct Node* node);
 
