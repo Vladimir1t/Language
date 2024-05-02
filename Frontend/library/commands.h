@@ -75,14 +75,19 @@ static struct element array_func[] =
 };
 const int FUNC_NUM = sizeof (array_func) / sizeof (array_func[0]);
 
-static struct element array_sign[] =
+struct elem_sign
 {
-    {"<",  1},
-    {"<",  2},
-    {"==", 3},
-    {"<=", 4},
-    {">=", 5},
-    {"!=", 6}
+    char name[MAX_OP_SIZE];
+    char code[MAX_OP_SIZE];
+};
+static struct elem_sign array_sign[] =
+{
+    {"<",  "b"},
+    {">",  "a"},
+    {"==", "e"},
+    {"<=", "be"},
+    {">=", "ae"},
+    {"!=", "ne"}
 };
 const int SIGN_NUM = sizeof (array_sign) / sizeof (array_sign[0]);
 

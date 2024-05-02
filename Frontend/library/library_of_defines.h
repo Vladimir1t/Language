@@ -66,7 +66,7 @@
     tokens->array_tokens[tokens->size].type = FUNC;                                 \
     CALLOC (tokens->array_tokens[tokens->size].data.func, char, MAX_STR_SIZE);      \
     strcpy (tokens->array_tokens[tokens->size].data.func, str);                     \
-    printf ("[%s]\n", tokens->array_tokens[tokens->size].data.func);                \
+    printf ("func [%s]\n", tokens->array_tokens[tokens->size].data.func);           \
     tokens->size += 1;                                                              \
     break;
 
@@ -74,7 +74,7 @@
     tokens->array_tokens[tokens->size].type = IF_;                                 \
     CALLOC (tokens->array_tokens[tokens->size].data.if_, char, MAX_STR_SIZE);      \
     strcpy (tokens->array_tokens[tokens->size].data.if_, str);                     \
-    printf ("[%s]\n", tokens->array_tokens[tokens->size].data.if_);                \
+    printf ("if [%s]\n", tokens->array_tokens[tokens->size].data.if_);             \
     tokens->size += 1;
 
 #define ADD_VARIABLE(...)                                                       \
