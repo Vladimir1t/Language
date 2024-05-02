@@ -24,14 +24,17 @@ enum token_t
 {
     OP    = 1,
     KEY_W = 2,
-    BR_C  = 3,
-    BR_O  = 4,
-    NUM   = 5,
-    VAR   = 6,
-    OP_L  = 7,
+    NUM   = 3,
+    VAR   = 4,
+    OP_L  = 5,
+    BR_C  = 6,
+    BR_O  = 7,
     CBR_C = 8,
     CBR_O = 9,
-    END   = 10,
+    IF_   = 10,
+    FUNC  = 11,
+    SIGN  = 12,
+    END   = 13,
 };
 
 union node_data
@@ -43,6 +46,9 @@ union node_data
     int           value;    // double number
     char*         var;      // x, y, z, var etc
     char*         op_long;  // sin, cos, ln etc
+    char*         func;     // in, out
+    char*         if_;      // if
+    char*         sign;     // <, >, ==, etc
 };
 
 struct Node
@@ -63,6 +69,9 @@ union Data
     int           value;   // double number
     char*         var;     // x, y, z, var etc
     char*         op_long; // sin, cos, ln etc
+    char*         func;    // in, out
+    char*         if_;     // if
+    char*         sign;    // <, >, ==, <= etc
     char          end;     // \0
 };
 

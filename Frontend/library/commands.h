@@ -13,6 +13,9 @@ enum Class_type
     T_KEY_W   =  4,
     T_CBR_O   =  5,
     T_CBR_C   =  6,
+    T_FUNC    =  7,
+    T_IF_     =  8,
+    T_SIGN    =  9,
     DEFUALT   = -1,
 };
 
@@ -41,13 +44,13 @@ enum Class_key_word
     str_end  = ';',
 };
 
-struct operation
+struct element
 {
    char name[MAX_OP_SIZE];
    int  code;
 };
 
-static struct operation array_op[] =
+static struct element array_op[] =
 {
     {"+",   OP_ADD},
     {"-",   OP_SUB},
@@ -63,8 +66,25 @@ static struct operation array_op[] =
     {"^",   OP_DEG},
     {"exp", OP_EXP}
 };
-
 const int OP_NUM = sizeof (array_op) / sizeof (array_op[0]);
+
+static struct element array_func[] =
+{
+    {"in",  1},
+    {"out", 2},
+};
+const int FUNC_NUM = sizeof (array_func) / sizeof (array_func[0]);
+
+static struct element array_sign[] =
+{
+    {"<",  1},
+    {"<",  2},
+    {"==", 3},
+    {"<=", 4},
+    {">=", 5},
+    {"!=", 6}
+};
+const int SIGN_NUM = sizeof (array_sign) / sizeof (array_sign[0]);
 
 struct variable
 {
