@@ -58,6 +58,20 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
 
         else if (node->type == T_KEY_W)
             fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%c\" ];\n", *node_num, node->data.key_w);
+
+        else if (node->type == T_IF_)
+            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%s\" ];\n", *node_num, node->data.if_);
+
+        else if (node->type == T_FUNC)
+            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%s\" ];\n", *node_num, node->data.func);
+
+        else if (node->type == T_SIGN)
+        {
+            printf ("[[%s]]\n",  node->data.sign);
+            for (int i = 0; i < SIGN_NUM; i++)
+                if (!strcmp (node->data.sign, array_sign[i].name))
+                    fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"sign %s \" ];\n", *node_num, array_sign[i].code);
+        }
     }
 
     node->num_in_tree = *node_num;
@@ -106,6 +120,15 @@ int tree_output (struct Node* node, FILE* file_output)
 
     if (node->type == T_VAR)
         fprintf (file_output, "( \"%s\" ", node->data.var);
+
+    else if (node->type == T_IF_)
+        fprintf (file_output, "( \"%s\" ", node->data.if_);
+
+    else if (node->type == T_FUNC)
+        fprintf (file_output, "( \"%s\" ", node->data.func);
+
+    else if (node->type == T_SIGN)
+        fprintf (file_output, "( \"%s\" ", node->data.sign);
 
     else if (node->type == T_OP)
         fprintf (file_output, "( \"%c\" ", node->data.op);
