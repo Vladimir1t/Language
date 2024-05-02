@@ -10,6 +10,10 @@ static struct Node* get_equation (struct Tokens* tokens, size_t* ptr);
 
 static struct Node* get_ass (struct Tokens* tokens, size_t* ptr);
 
+struct Node* get_condition (struct Tokens* tokens, size_t* ptr);
+
+struct Node* get_body (struct Tokens* tokens, size_t* ptr);
+
 static struct Node* get_e (struct Tokens* tokens, size_t* ptr);
 
 static struct Node* get_t (struct Tokens* tokens, size_t* ptr);
@@ -50,8 +54,8 @@ int get_database (struct Node** root, char* sourse_file)       // get data of tr
     struct Tokens tokens = {0};
     get_tokens (&tokens, text_data);
 
-    //for (int i = 0; i < tokens.size; i++)
-    //    printf ("..%d..\n", tokens.array_tokens[i].type);
+    for (int i = 0; i < tokens.size; i++)
+        printf ("..%d..\n", tokens.array_tokens[i].type);
 
     size_t ptr = 0;
     *root = get_g (&tokens, &ptr);
@@ -82,7 +86,7 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
     CHECK_PTR (tokens);
     CHECK_PTR (text_data);
 
-    tokens->capacity = 19;
+    tokens->capacity = 20;
     CALLOC (tokens->array_tokens, struct Token, tokens->capacity);
 
     int ptr = 0;
@@ -104,8 +108,17 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
                 for (int j = 0; j < OP_NUM; j++)
                     if (!strcmp (str, array_op[j].name))
                     {
+                        ADD_LONG_OP (tokens);
+                    }
+                for (int i = 0; i < FUNC_NUM; i++)
+                    if (!strcmp (str, array_func[i].name))
+                    {
                         ADD_FUNCTION (tokens);
                     }
+                if (!strcmp (str, "if"))
+                {
+                    ADD_IF_ (tokens);
+                }
             }
             else
             {
@@ -123,6 +136,11 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
         {
             ADD_END_OF_FILE (tokens);
         }
+        else if ('<' <= text_data[ptr] && text_data[ptr] <= '>')
+        {
+            ADD_SIGN (tokens);
+        }
+
         else
         {
             if (text_data[ptr] == '{')
@@ -141,7 +159,7 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
             {
                 ADD_TOKEN (BR_C, br_c, text_data[ptr]);
             }
-            else if (text_data[ptr] == '=' || text_data[ptr] == ';')
+            else if (text_data[ptr] == ';')
             {
                 ADD_TOKEN (KEY_W, key_w, text_data[ptr]);
             }
@@ -203,27 +221,107 @@ struct Node* get_ass (struct Tokens* tokens, size_t* ptr)
     printf ("Ass\n");
     struct Node* value_1 = NULL;
     struct Node* value_2 = NULL;
-    unsigned char equal = '=';
 
     value_1 = get_var (tokens, ptr);
     if (value_1 == NULL)
         return NULL;
 
-    if (tokens->array_tokens[*ptr].type == KEY_W && tokens->array_tokens[*ptr].data.key_w == '=')
+    if (value_1->type == T_VAR && tokens->array_tokens[*ptr].data.key_w == '=')
+    {
+        unsigned char equal = '=';
         *ptr += 1;
+        value_2 = get_e (tokens, ptr);
+
+        if (value_2 == NULL)
+            return NULL;
+
+        value_1 = create_node (T_KEY_W, &equal, value_1, value_2);
+    }
+    else if (value_1->type == T_FUNC)
+    {
+        if (tokens->array_tokens[*ptr].data.br_o == '(')
+        {
+            *ptr += 1;
+            value_2 = get_var (tokens, ptr);
+            if (value_2->type != T_VAR)
+                return syntax_error ();
+            if (tokens->array_tokens[*ptr].data.br_c == ')')
+            {
+                *ptr += 1;
+                value_1 = create_node (T_FUNC, tokens->array_tokens[*ptr].data.func, value_2, NULL);
+            }
+            else
+                return syntax_error ();
+        }
+        else
+            return syntax_error ();
+    }
+    else if (value_1->type == T_IF_)
+    {
+        char* if_ = "if";
+        value_1 = get_condition (tokens, ptr);
+        value_2 = get_body (tokens, ptr);
+
+        value_1 = create_node (T_IF_, if_, value_1, value_2);
+    }
     else
         return syntax_error ();
-
-    value_2 = get_e (tokens, ptr);
-
-    if (value_2 == NULL)
-        return NULL;
-
-    value_1 = create_node (T_KEY_W, &equal, value_1, value_2);
 
     return value_1;
 }
 
+struct Node* get_condition (struct Tokens* tokens, size_t* ptr)
+{
+    struct Node* value_1 = NULL;
+    struct Node* value_2 = NULL;
+
+    if (tokens->array_tokens[*ptr].data.br_o == '(')
+    {
+        char str[MAX_STR_SIZE] = {0};
+        *ptr += 1;
+        value_1 = get_e (tokens, ptr);
+        if (tokens->array_tokens[*ptr].type == SIGN)
+        {
+            strcpy (str, tokens->array_tokens[*ptr].data.sign);
+            *ptr += 1;
+        }
+        else
+            return syntax_error ();
+
+        value_2 = get_e (tokens, ptr);
+
+        if (tokens->array_tokens[*ptr].data.br_c == ')')
+            *ptr += 1;
+        else
+            return syntax_error ();
+
+        value_1 = create_node (T_SIGN, str, value_1, value_2);
+    }
+    else
+        return syntax_error ();
+
+    return value_1;
+}
+
+struct Node* get_body (struct Tokens* tokens, size_t* ptr)
+{
+    struct Node* value = NULL;
+
+    if (tokens->array_tokens[*ptr].data.br_o == '{')
+    {
+        *ptr += 1;
+        value = get_equation (tokens, ptr);
+
+        if (tokens->array_tokens[*ptr].data.br_c == '}')
+            *ptr += 1;
+        else
+            return syntax_error ();
+    }
+    else
+        return syntax_error ();
+
+    return value;
+}
 
 struct Node* get_e (struct Tokens* tokens, size_t* ptr)    //  + or -
 {
@@ -293,8 +391,8 @@ struct Node* get_p (struct Tokens* tokens, size_t* ptr)   //  (, )  and determin
 
     printf ("P\n");
     struct Node* value = NULL;
-    //printf ("{%d}\n", tokens->array_tokens[*ptr].type);
-    if (tokens->array_tokens[*ptr].data.br_o  == '(')
+    printf ("{%d}\n", tokens->array_tokens[*ptr].type);
+    if (tokens->array_tokens[*ptr].type == BR_O && tokens->array_tokens[*ptr].data.br_o  == '(')
     {
         *ptr += 1;
         value = get_e (tokens, ptr);
@@ -310,7 +408,7 @@ struct Node* get_p (struct Tokens* tokens, size_t* ptr)   //  (, )  and determin
             }
         }
     }
-
+    //printf ("{%d}\n", tokens->array_tokens[*ptr].type);
     else if (tokens->array_tokens[*ptr].type == VAR || tokens->array_tokens[*ptr].type == OP_L)
         value = get_f (tokens, ptr);
 
@@ -380,6 +478,16 @@ struct Node* get_var (struct Tokens* tokens, size_t* ptr)
     if (tokens->array_tokens[*ptr].type == VAR)
     {
         value = create_node (T_VAR, tokens->array_tokens[*ptr].data.var, NULL, NULL);
+        *ptr += 1;
+    }
+    else if (tokens->array_tokens[*ptr].type == IF_)
+    {
+        value = create_node (T_VAR, tokens->array_tokens[*ptr].data.if_, NULL, NULL);
+        *ptr += 1;
+    }
+    else if (tokens->array_tokens[*ptr].type == FUNC)
+    {
+        value = create_node (T_VAR, tokens->array_tokens[*ptr].data.func, NULL, NULL);
         *ptr += 1;
     }
 
@@ -455,6 +563,21 @@ struct Node* create_node (Class_type type, void* data, struct Node* left, struct
         case T_OP_LONG:
             new_node->data.op_long = (char*) calloc (MAX_OP_SIZE, sizeof (char));
             strcpy (new_node->data.op_long, (char*) data);
+            break;
+
+        case T_FUNC:
+            new_node->data.func = (char*) calloc (MAX_STR_SIZE, sizeof (char));
+            strcpy (new_node->data.func, (char*) data);
+            break;
+
+        case T_IF_:
+            new_node->data.if_ = (char*) calloc (MAX_STR_SIZE, sizeof (char));
+            strcpy (new_node->data.if_, (char*) data);
+            break;
+
+        case SIGN:
+            new_node->data.sign = (char*) calloc (MAX_OP_SIZE, sizeof (char));
+            strcpy (new_node->data.sign, (char*) data);
             break;
 
         default:

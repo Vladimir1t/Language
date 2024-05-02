@@ -10,7 +10,7 @@ int main (int argc, char* argv[])
     if (get_database (&root, argv[1]) != SUCCESS)
         return 0;
 
-    const char file_graph[] = "graphviz\\graph.dot";
+    const char file_graph[] = "Frontend\\graphviz\\graph.dot";
 
     char choice = '\0';
     while (choice != 'n' && choice != 'y')
@@ -21,8 +21,8 @@ int main (int argc, char* argv[])
         if (choice == 'y')
         {
             build_graphviz (root, file_graph);
-            system ("dot -Tpng graphviz\\graph.dot -o graphviz\\tree_graph.png");
-            system ("start graphviz\\tree_graph.png");
+            system ("dot -Tpng Frontend\\graphviz\\graph.dot -o Frontend\\graphviz\\tree_graph.png");
+            system ("start Frontend\\graphviz\\tree_graph.png");
         }
         clean_buffer ();
     }
@@ -37,8 +37,8 @@ int main (int argc, char* argv[])
         if (choice == 'y')
         {
             build_graphviz (root, file_graph);
-            system ("dot -Tpng graphviz\\graph.dot -o graphviz\\tree_graph.png");
-            system ("start graphviz\\tree_graph.png");
+            system ("dot -Tpng Frontend\\graphviz\\graph.dot -o Frontend\\graphviz\\tree_graph.png");
+            system ("start Frontend\\graphviz\\tree_graph.png");
         }
         clean_buffer ();
     }
