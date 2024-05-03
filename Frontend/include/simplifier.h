@@ -4,6 +4,8 @@
 #include "parcer.h"
 #include "..\library\commands.h"
 
+#define KEY_WORDS T_NUM && tree->type != DEFUALT && tree->type != T_KEY_W  &&  tree->type != T_IF_ && tree->type != T_FUNC && tree->type != T_KEY_W && tree->type != T_SIGN
+
 int calculator (struct Node* tree, int* is_var_in_subtree);
 
 struct Node* copy_subtree (const struct Node* node);
