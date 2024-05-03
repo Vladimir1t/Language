@@ -69,6 +69,9 @@ int calculator (struct Node* tree, int* is_var_in_subtree)
             case OP_TG:
                 return tan (calculator (tree->left, is_var_in_subtree));
 
+            case OP_SQRT:
+                return sqrt (calculator (tree->left, is_var_in_subtree));
+
             default:
                 return ERROR;
                 break;
@@ -111,7 +114,7 @@ void simplifier_conv_of_const (struct Node* tree, int* changed)
     int is_var_in_subtree = 0;
     double value = calculator (tree, &is_var_in_subtree);
 
-    if (is_var_in_subtree == 0 && tree->type != T_NUM && tree->type != DEFUALT && tree->type != T_KEY_W)
+    if (is_var_in_subtree == 0 && tree->type != KEY_WORDS)
     {
         tree->data.value = value;
         tree->type = T_NUM;
@@ -202,11 +205,14 @@ Class_operation long_op_determinator (char* operation)
 
     else if (!strcmp (operation, "tg"))
         return OP_TG;
-}
 
+    else if (!strcmp (operation, "sqrt"))
+        return OP_SQRT;
+}
+/*
 int double_compare (double first_double, double second_double)
 {
     const double EPSILON = 0.000001;
     return (fabs (first_double - second_double) <= EPSILON);
-}
+}*/
 
