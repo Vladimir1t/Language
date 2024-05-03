@@ -43,35 +43,29 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
     if (node->right == NULL && node->left == NULL)
     {
         if (node->type == T_VAR)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = YellowGreen, label = \"%s\" ];\n", *node_num, node->data.var);
-
+            PRINT_GR_LEAF ("%s", var);
         else if (node->type == T_NUM)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = YellowGreen, label = \"%d\" ];\n", *node_num, node->data.value);
+            PRINT_GR_LEAF ("%d", value);
+        else if (node->type == T_FUNC)
+            PRINT_GR_LEAF ("%s ()", func);
     }
     else
     {
         if (node->type == T_OP)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%c\" ];\n", *node_num, node->data.op);
-
+            PRINT_GR ("%c", op);
         else if (node->type == T_OP_LONG)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%s\" ];\n", *node_num, node->data.op_long);
-
+            PRINT_GR ("%s", op_long);
         else if (node->type == T_KEY_W)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%c\" ];\n", *node_num, node->data.key_w);
-
+            PRINT_GR ("%c", key_w);
         else if (node->type == T_IF_)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%s\" ];\n", *node_num, node->data.if_);
-
+            PRINT_GR ("%s", if_);
         else if (node->type == T_FUNC)
-            fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"%s\" ];\n", *node_num, node->data.func);
-
+            PRINT_GR ("%s ()", func);
         else if (node->type == T_SIGN)
-        {
-            printf ("[[%s]]\n",  node->data.sign);
+            //printf ("[[%s]]\n",  node->data.sign);
             for (int i = 0; i < SIGN_NUM; i++)
                 if (!strcmp (node->data.sign, array_sign[i].name))
-                    fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"sign %s \" ];\n", *node_num, array_sign[i].code);
-        }
+                    PRINT_GR_SIGN ("sign %s", array_sign[i].code);
     }
 
     node->num_in_tree = *node_num;
@@ -80,7 +74,6 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
         *node_num += 1;
         add_node_in_graph (node->left, file_graph, node_num);
     }
-
     if (node->right != NULL)
     {
         *node_num += 1;
@@ -120,34 +113,24 @@ int tree_output (struct Node* node, FILE* file_output)
 
     if (node->type == T_VAR)
         fprintf (file_output, "( \"%s\" ", node->data.var);
-
     else if (node->type == T_IF_)
         fprintf (file_output, "( \"%s\" ", node->data.if_);
-
     else if (node->type == T_FUNC)
         fprintf (file_output, "( \"%s\" ", node->data.func);
-
     else if (node->type == T_SIGN)
         fprintf (file_output, "( \"%s\" ", node->data.sign);
-
     else if (node->type == T_OP)
         fprintf (file_output, "( \"%c\" ", node->data.op);
-
     else if (node->type == T_KEY_W)
         fprintf (file_output, "( \"%c\" ", node->data.key_w);
-
     else if (node->type == T_CBR_O)
         fprintf (file_output, "( \"%c\" ", node->data.br_o);
-
     else if (node->type == T_CBR_C)
         fprintf (file_output, "( \"%c\" ", node->data.br_c);
-
     else if (node->type == T_NUM)
         fprintf (file_output, "( \"%d\" ", node->data.value);
-
     if (node->left != NULL)
         tree_output (node->left, file_output);
-
     if (node->right != NULL)
         tree_output (node->right, file_output);
 
@@ -173,6 +156,16 @@ void dump_node (struct Node *node)
         printf ("# %c #", node->data.br_c);
     else if (node->type == T_VAR)
         printf ("# %s #", node->data.var);
+
+    else if (node->type == T_IF_)
+        printf ("# %s #", node->data.if_);
+    else if (node->type == T_FUNC)
+        printf ("# %s #", node->data.func);
+    else if (node->type == T_SIGN)
+    {
+        printf ("ok\n");
+        printf ("# %s #", node->data.sign);
+    }
 
     printf ("\n--------------------------------\n");
 }
