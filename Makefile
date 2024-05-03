@@ -14,8 +14,8 @@ CC = g++
 front: frontend
 	Frontend\frontend.exe text_files\sourse_file.txt
 
-frontend: Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
-	$(CC) -o Frontend\frontend Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
+frontend: src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
+	$(CC) -o Frontend\frontend src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
 
 Frontend\main.o:  Frontend\src\main.cpp
 	$(CC) Frontend\src\main.cpp -c  $(FLAGS)
