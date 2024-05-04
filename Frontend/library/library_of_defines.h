@@ -133,10 +133,10 @@
     fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = YellowGreen, label = \"" spec "\" ];\n", *node_num, node->data.elem)     \
 
 #define PRINT_GR(spec, elem)                                                                                                                    \
-    fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"" spec "\" ];\n", *node_num, node->data.elem)      \
+    fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"" spec "\" ];\n", *node_num, node->data.elem)       \
 
 #define PRINT_GR_SIGN(spec, elem)                                                                                                               \
-    fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"" spec "\" ];\n", *node_num, elem)         \
+    fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = Peru, label = \"" spec "\" ];\n", *node_num, elem)                  \
 
 
 #endif // DSL_H_INCLUDED
