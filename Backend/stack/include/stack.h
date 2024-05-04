@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-//#include "..\..\include\differentiator.h"  //
 
 #define SPEC_STK "%s"
 
@@ -29,7 +28,7 @@ enum ReallocMod
 enum Errors
 {
     CAPACITY_BELLOW_ZERO = 0,
-    SIZE_BELLOW_ZERO = 1,
+    SIZE_BELLOW_ZERO     = 1,
 };
 
 void stack_ctor (stack* stk, const size_t capacity);
