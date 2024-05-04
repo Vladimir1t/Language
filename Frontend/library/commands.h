@@ -110,19 +110,5 @@ static struct elem_sign array_sign[] =
 };
 const int SIGN_NUM = sizeof (array_sign) / sizeof (array_sign[0]);
 
-struct variable
-{
-    char  name[MAX_STR_SIZE];
-    int   value;
-};
-
-static struct variable array_vr[] =
-{
-    {"x", 0},
-    {"y", 0},
-    {"z", 0},
-};
-
-//static int var_num = sizeof (array_vr) / sizeof (array_vr[0]);
 
 #endif // COMMANDS_H_INCLUDED
