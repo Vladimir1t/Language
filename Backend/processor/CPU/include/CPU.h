@@ -10,7 +10,6 @@
 #include "..\..\Onegin\include\onegin.h"
 #include "..\..\Library\commands.h"
 
-//const char*  fileSourse  = "Assembler\\res_ass.txt";  /* bytecode */
 const char   MASK        = 3;                         /* 0000 0011 */
 const size_t RAM_SIZE    = 50;                        /* size of a RAM */
 
@@ -30,7 +29,7 @@ void CpuCtor (struct Cpu* proc);
 
 void CpuDtor (struct Cpu* proc);
 
-int FillArray (struct Cpu* proc);
+int FillArray (struct Cpu* proc, char* fileSourse);
 
 void GetDigits (struct Cpu* proc, elem_t* num2, elem_t* num1);
 

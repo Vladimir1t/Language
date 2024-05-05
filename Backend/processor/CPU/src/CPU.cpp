@@ -9,7 +9,7 @@ int main (int argc, char* argv[])
 
     FillArray (&proc, argv[1]);                                 // get bytecode from sourse file
 
-    FOPEN (resultF, "Log\\result.txt", "w");
+    FOPEN (resultF, argv[2], "w");
 
     int result = ExecuteCommands (resultF, &proc);
     if (result == SUCCESS)
@@ -33,12 +33,10 @@ int ExecuteCommands (FILE* resultF, struct Cpu* proc)
         switch (command)
         {
             case PUSH:
-                //printf ("push %d\n", *arg);
                 PUSH_COM (arg);
                 break;
 
             case POP:
-                //printf ("pop\n");
                 POP_COM (arg);
                 break;
 
