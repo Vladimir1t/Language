@@ -21,47 +21,6 @@ static struct Node* syntax_error ();
 
 static size_t file_size_measure (FILE* const file_p);
 
-int run_parcer (struct Node** root, char* sourse_file)
-{
-    if (get_database (root, sourse_file) != SUCCESS)
-        return 0;
-
-    const char file_graph[] = "Frontend\\graphviz\\graph.dot";
-
-    char choice = '\0';
-    while (choice != 'n' && choice != 'y')
-    {
-        printf ("Do you want to print data_tree?\n"
-                "( y, n )\n");
-        if (scanf ("%c", &choice) != 1)
-            continue;
-        if (choice == 'y')
-        {
-            build_graphviz (*root, file_graph);
-            system ("dot -Tpng Frontend\\graphviz\\graph.dot -o Frontend\\graphviz\\tree_graph.png");
-            system ("start Frontend\\graphviz\\tree_graph.png");
-        }
-        clean_buffer ();
-    }
-    simplifier (*root);
-
-    choice = '\0';
-    while (choice != 'n' && choice != 'y')
-    {
-        printf ("Do you want to print data_tree?\n"
-                "( y, n )\n");
-        scanf ("%c", &choice);
-        if (choice == 'y')
-        {
-            build_graphviz (*root, file_graph);
-            system ("dot -Tpng Frontend\\graphviz\\graph.dot -o Frontend\\graphviz\\tree_graph.png");
-            system ("start Frontend\\graphviz\\tree_graph.png");
-        }
-        clean_buffer ();
-    }
-    //tree_output (*root, file_output);
-}
-
 int get_database (struct Node** root, char* sourse_file)       // get data of tree in the following file
 {
     CHECK_PTR (root);
@@ -83,9 +42,6 @@ int get_database (struct Node** root, char* sourse_file)       // get data of tr
 
     struct Tokens tokens = {0};
     get_tokens (&tokens, text_data);
-
-    //for (int i = 0; i < tokens.size; i++)
-    //    printf ("..%d..\n", tokens.array_tokens[i].type);
 
     size_t ptr = 0;
     *root = get_g (&tokens, &ptr);
@@ -121,7 +77,7 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
 
     int ptr = 0;
     while (1)
-    {
+    {//
         if (tokens->size == tokens->capacity)
         {
             INCREASE_CAPACITY (tokens);
@@ -155,7 +111,7 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
                 ADD_VARIABLE (tokens);
             }
         }
-        else if (isdigit (text_data[ptr]))
+        else if (isdigit (text_data[ptr]) || (text_data[ptr] == '-' && (isdigit (text_data[ptr + 1]))))
         {
             ADD_NUMBER (tokens);
         }
@@ -166,7 +122,7 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
         {
             ADD_END_OF_FILE (tokens);
         }
-        else if ('<' <= text_data[ptr] && text_data[ptr] <= '>')
+        else if (('<' <= text_data[ptr] && text_data[ptr] <= '>') || text_data[ptr] == '!')
         {
             ADD_SIGN (tokens);
         }
@@ -276,19 +232,15 @@ struct Node* get_ass (struct Tokens* tokens, size_t* ptr)
     {
         if (IS_BRACKET_O)
         {
-            printf ("ok\n");
             *ptr += 1;
-            if (strcmp (value_1->data.func, "in"))   //
-            {
-                value_2 = get_var (tokens, ptr);
-                if (value_2 == NULL || value_2->type != T_VAR)
-                    return syntax_error ();
-            }
-            else if (IS_BRACKET_C)
+            value_2 = get_var (tokens, ptr);
+            if (value_2 == NULL || value_2->type != T_VAR)
+                return syntax_error ();
+
+            if (IS_BRACKET_C)
             {
                 *ptr += 1;
                 value_1->left = value_2;
-                //printf ("[[%s]%d]\n", value_1->data.func, value_1->type);
                 return value_1;
             }
             else
@@ -409,7 +361,6 @@ struct Node* get_t (struct Tokens* tokens, size_t* ptr)   //   * or /
 
     while (IS_MUL_OR_DIV)
     {
-        //printf ("{*}\n");
         const char op = tokens->array_tokens[*ptr].data.op;
         *ptr += 1;
         struct Node* value_2 = get_p (tokens, ptr);
