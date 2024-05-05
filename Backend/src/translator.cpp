@@ -3,6 +3,7 @@
 static FILE* error_file = fopen ("log\\error_file_translator.txt", "w");
 
 static int make_asm_code      (struct Node* node, struct Variables* variables, FILE* asm_file);
+
 static int add_str_end_asm    (struct Node* node, FILE* asm_file, struct Variables* variables);
 static int add_assignment_asm (struct Node* node, FILE* asm_file, struct Variables* variables);
 static int add_if_asm         (struct Node* node, FILE* asm_file, struct Variables* variables);
@@ -31,8 +32,12 @@ int run_translator (struct Node* root, char* output_file)
     fclose (asm_file);
 }
 
-static int make_asm_code (struct Node* node, struct Variables* variables, FILE* asm_file)
+int make_asm_code (struct Node* node, struct Variables* variables, FILE* asm_file)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (variables);
+    CHECK_PTR (asm_file);
+
     if (err == 1)
         return ERROR;
     printf ("-------------------------------\n");
@@ -234,6 +239,8 @@ int add_func_asm (struct Node* node, FILE* asm_file, struct Variables* variables
 
 int define_sign (char* sign)
 {
+    CHECK_PTR (sign);
+
     if (!strcmp (sign, "<"))
         return B;
     else if (!strcmp (sign, ">"))
@@ -250,6 +257,8 @@ int define_sign (char* sign)
 
 int define_op_long (char* op)
 {
+    CHECK_PTR (op);
+    
     if (!strcmp (op, "cos"))
         return OP_COS;
     else if (!strcmp (op, "sin"))

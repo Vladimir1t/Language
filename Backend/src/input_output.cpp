@@ -60,7 +60,6 @@ int construct_data_nodes (struct Node* root, char* text_data, size_t file_size)
             stack_push (&stk, (void**) &root);
             position = LEFT;
         }
-
         if (text_data[i] == '{')                        // add node in tree
         {
             char         elem[MAX_OP_SIZE] = {0};
@@ -128,7 +127,6 @@ int get_node_data (char* text_data, int* i, struct Node* node)
             }
             break;
         }
-
         case T_VAR:
             ADD_VARIABLE (node->data);
             break;
@@ -273,12 +271,10 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
         else if (node->type == T_FUNC)
             PRINT_GR ("%s ()", func);
         else if (node->type == T_SIGN)
-            //printf ("[[%s]]\n",  node->data.sign);
             for (int i = 0; i < SIGN_NUM; i++)
                 if (!strcmp (node->data.sign, array_sign[i].name))
                     PRINT_GR_SIGN ("sign %s", array_sign[i].code);
     }
-
     node->num_in_tree = *node_num;
     if (node->left != NULL)
     {
@@ -304,7 +300,6 @@ int add_connection_in_graph (struct Node* node, FILE* file_graph)
         fprintf (file_graph, "%d -> %d[ color = Peru ];\n", node->num_in_tree, (node->left)->num_in_tree);
         add_connection_in_graph (node->left, file_graph);
     }
-
     if (node->right != NULL)
     {
         fprintf (file_graph, "%d -> %d[ color = Peru ];\n", node->num_in_tree, (node->right)->num_in_tree);
@@ -352,8 +347,8 @@ int tree_output (struct Node* node, FILE* file_output)
 
 void dump_node (struct Node *node)
 {
-    printf ("\n---------------NODE-------------\n");
-    printf ("type - %d\n", node->type);
+    printf ("\n--------------- NODE -------------\n");
+    printf ("type [%d]\n", node->type);
 
     if (node->type == T_NUM)
         printf ("# %d #", node->data.value);
@@ -367,18 +362,14 @@ void dump_node (struct Node *node)
         printf ("# %c #", node->data.br_c);
     else if (node->type == T_VAR)
         printf ("# %s #", node->data.var);
-
     else if (node->type == T_IF_)
         printf ("# %s #", node->data.if_);
     else if (node->type == T_FUNC)
         printf ("# %s #", node->data.func);
     else if (node->type == T_SIGN)
-    {
-        printf ("ok\n");
         printf ("# %s #", node->data.sign);
-    }
 
-    printf ("\n--------------------------------\n");
+    printf ("\n----------------------------------\n");
 }
 
 void clean_buffer ()
