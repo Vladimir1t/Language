@@ -10,6 +10,12 @@ FLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equa
 TARGET = Language
 CC = g++
 
+all: frontend backend cpu asm
+	Frontend\frontend.exe text_files\sourse_file.txt
+	Backend\backend.exe text_files\file_output.txt text_files\asm_file.txt
+	Backend\Processor\Assembler\assembler.exe  text_files\asm_file.txt  Backend\Processor\Assembler\res_ass.txt
+	Backend\Processor\CPU\cpu.exe  Backend\Processor\Assembler\res_ass.txt  text_files\result_file.txt
+
 # Frontend
 front: frontend
 	Frontend\frontend.exe text_files\sourse_file.txt
@@ -17,12 +23,23 @@ front: frontend
 frontend: Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
 	$(CC) -o Frontend\frontend Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
 
+# Backend
 back: backend
 	Backend\backend.exe text_files\file_output.txt text_files\asm_file.txt
 
-backend: Backend\src\main.cpp Backend\src\input_output.cpp Backend\stack\src\stack.cpp
-	$(CC) -o Backend\backend Backend\src\main.cpp Backend\src\input_output.cpp Backend\stack\src\stack.cpp
+backend: Backend\src\main.cpp Backend\src\input_output.cpp Backend\stack\src\stack.cpp Backend\src\translator.cpp
+	$(CC) -o Backend\backend Backend\src\main.cpp Backend\src\input_output.cpp Backend\stack\src\stack.cpp Backend\src\translator.cpp
 
+
+proc: asm cpu
+	Backend\Processor\Assembler\assembler.exe  text_files\asm_file.txt  Backend\Processor\Assembler\res_ass.txt
+	Backend\Processor\CPU\cpu.exe  Backend\Processor\Assembler\res_ass.txt  text_files\result_file.txt
+
+cpu: Backend\Processor\CPU\src\CPU.cpp  Backend\Processor\Onegin\src\file_size.cpp  Backend\Processor\Onegin\src\string_read.cpp  Backend\Processor\Onegin\src\destruct.cpp  Backend\Processor\Onegin\src\str_print.cpp  Backend\Stack\src\stack.cpp
+	$(CC) -o Backend\Processor\CPU\cpu Backend\Processor\CPU\src\CPU.cpp  Backend\Processor\Onegin\src\file_size.cpp  Backend\Processor\Onegin\src\string_read.cpp  Backend\Processor\Onegin\src\destruct.cpp  Backend\Processor\Onegin\src\str_print.cpp  Backend\Processor\Stack\src\stack.cpp
+
+asm: Backend\Processor\Assembler\src\assembler.cpp  Backend\Processor\Onegin\src\file_size.cpp  Backend\Processor\Onegin\src\string_read.cpp  Backend\Processor\Onegin\src\destruct.cpp  Backend\Processor\Onegin\src\str_print.cpp
+	$(CC) -o Backend\Processor\Assembler\assembler Backend\Processor\Assembler\src\assembler.cpp  Backend\Processor\Onegin\src\file_size.cpp  Backend\Processor\Onegin\src\string_read.cpp  Backend\Processor\Onegin\src\destruct.cpp  Backend\Processor\Onegin\src\str_print.cpp
 
 
 
