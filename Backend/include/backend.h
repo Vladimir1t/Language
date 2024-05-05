@@ -53,6 +53,8 @@ int build_graphviz (struct Node* root, const char* file_name);
 
 void clean_buffer ();
 
+int run_translator (struct Node* root, char* output_file);
+
 void tree_dtor (struct Node* node);
 
 #endif // TRANSLATOR_H_INCLUDED
