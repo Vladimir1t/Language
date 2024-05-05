@@ -1,16 +1,55 @@
-xu = (2)^(2*xu)+ 4 * cos(6);
-y = 13 + x;
-x = w + 13;
+in(a);
+in(b);
+in(c);
 
-if(x <= 12)
+anyNum  =  888;
+noRoots = -111;
+
+if(a == 0)
 {
-    x = 12;
-    if(y < 13)
+    if(c == 0)
     {
-        y = 7 * 3;
-        in();
-        y = sqrt(9);
+        if(b == 0)
+        {
+            x = anyNum;
+        };
+
+        if(b != 0)
+        {
+            x = 0;
+        };
     };
+
+    if(c != 0)
+    {
+        x = 0 - c / b;
+    };
+
+    out(x);
 };
 
-y = 4 * 6 - (7 - 13);
+if(a != 0)
+{
+    discr = b * b - 4 * a * c;
+
+    if(discr == 0)
+    {
+        x = 0 - b / (2 * a);
+        out(x);
+    };
+
+    if(discr < 0)
+    {
+        x = noRoots;
+        out(x);
+    };
+
+    if(discr > 0)
+    {
+        d = sqrt(discr);
+        x = (d - b) / 2;
+        y = 0 - (d + b) / 2;
+        out(x);
+        out(y);
+    };
+};

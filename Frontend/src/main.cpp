@@ -5,7 +5,7 @@ int main (int argc, char* argv[])
     FOPEN (file_output, "text_files\\file_output.txt", "w");
     struct Node* root = NULL;
 
-    printf ("\n------- LANGUAGE -------\n\n");
+    printf ("\n----------- LANGUAGE -----------\n\n");
 
     if (get_database (&root, argv[1]) != SUCCESS)
         return 0;
@@ -15,7 +15,7 @@ int main (int argc, char* argv[])
     char choice = '\0';
     while (choice != 'n' && choice != 'y')
     {
-        printf ("Do you want to print data_tree?\n"
+        printf ("- Do you want to print data_tree?\n"
                 "( y, n )\n");
         scanf ("%c", &choice);
         if (choice == 'y')
@@ -31,7 +31,7 @@ int main (int argc, char* argv[])
     choice = '\0';
     while (choice != 'n' && choice != 'y')
     {
-        printf ("Do you want to print data_tree?\n"
+        printf ("- Do you want to print data_tree after simplification?\n"
                 "( y, n )\n");
         scanf ("%c", &choice);
         if (choice == 'y')

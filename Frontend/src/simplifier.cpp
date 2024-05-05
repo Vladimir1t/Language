@@ -15,7 +15,7 @@ int calculator (struct Node* tree, int* is_var_in_subtree)
         *is_var_in_subtree = 1;
 
     if (*is_var_in_subtree == 1)
-        return 0;
+        return 10;
 
     if (tree->type == T_OP)
     {
@@ -88,7 +88,7 @@ void simplifier (struct Node* tree)
     {
         changed = 0;
         simplifier_conv_of_const (tree, &changed);
-        remove_neutral_elements (tree, &changed);
+        remove_neutral_elements  (tree, &changed);
     }
 }
 
@@ -112,15 +112,15 @@ struct Node* copy_subtree (const struct Node* node)
 void simplifier_conv_of_const (struct Node* tree, int* changed)
 {
     int is_var_in_subtree = 0;
-    double value = calculator (tree, &is_var_in_subtree);
+    int value = calculator (tree, &is_var_in_subtree);
 
-    if (is_var_in_subtree == 0 && tree->type != KEY_WORDS)
+    if (is_var_in_subtree == 0 && tree->type != SPEC_WORDS)
     {
         tree->data.value = value;
         tree->type = T_NUM;
 
-        SUBTREE_DTOR(tree->left);
-        SUBTREE_DTOR(tree->right);
+        SUBTREE_DTOR (tree->left);
+        SUBTREE_DTOR (tree->right);
         *changed = 1;
     }
     if (tree->left != NULL)
