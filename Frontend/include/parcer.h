@@ -74,8 +74,6 @@ struct Tokens
     size_t        capacity;
 };
 
-int run_parcer (struct Node** root, char* sourse_file);
-
 int get_database (struct Node** root, char* sourse_file);
 
 struct Node* create_node (Class_type type, void* data, struct Node* left, struct Node* right);
