@@ -1,11 +1,10 @@
-#include "..\include\translator.h"
+#include "..\include\backend.h"
 
 int main (int argc, char* argv[])
 {
-    //FOPEN (file_output, "text_files\\asm_file.txt", "w");
     struct Node* root = NULL;
 
-    printf ("\n------- Translator -------\n\n");
+    printf ("\n---------- Translator ----------\n\n");
 
     if (get_database (&root, argv[1]) != SUCCESS)
         return 0;
@@ -15,7 +14,7 @@ int main (int argc, char* argv[])
     char choice = '\0';
     while (choice != 'n' && choice != 'y')
     {
-        printf ("Do you want to print data_tree?\n"
+        printf ("- Do you want to print data_tree?\n"
                 "( y, n )\n");
         scanf ("%c", &choice);
         if (choice == 'y')
@@ -26,23 +25,8 @@ int main (int argc, char* argv[])
         }
         clean_buffer ();
     }
-    /*simplifier (root);
 
-    choice = '\0';
-    while (choice != 'n' && choice != 'y')
-    {
-        printf ("Do you want to print data_tree?\n"
-                "( y, n )\n");
-        scanf ("%c", &choice);
-        if (choice == 'y')
-        {
-            build_graphviz (root, file_graph);
-            system ("dot -Tpng Frontend\\graphviz\\graph.dot -o Frontend\\graphviz\\tree_graph.png");
-            system ("start Frontend\\graphviz\\tree_graph.png");
-        }
-        clean_buffer ();
-    }
-    tree_output (root, file_output);*/
+    run_translator (root, argv[2]);
 
     tree_dtor (root);
 
