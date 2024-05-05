@@ -117,6 +117,8 @@ int tree_output (struct Node* node, FILE* file_output)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.if_);
     else if (node->type == T_FUNC)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.func);
+    else if (node->type == T_OP_LONG)
+        fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.op_long);
     else if (node->type == T_SIGN)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.sign);
     else if (node->type == T_OP)
@@ -134,8 +136,8 @@ int tree_output (struct Node* node, FILE* file_output)
         tree_output (node->left, file_output);
     if (node->right != NULL)
         tree_output (node->right, file_output);
-        
-    if (node->type == T_KEY_W && node->right == NULL)
+
+    if (node->left != NULL && node->right == NULL)
         fprintf (file_output, "{ #-1# #null# ");
 
     fprintf (file_output, "}");
