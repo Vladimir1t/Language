@@ -1,4 +1,4 @@
-#include "..\include\translator.h"
+#include "..\include\backend.h"
 
 static FILE* error_file = fopen ("log\\error_file_input_output.txt", "w");
 
@@ -13,13 +13,11 @@ static void dump_node (struct Node *node);
 
 int get_database (struct Node** root, char* file_input)   // get data of tree in the following file
 {
-    CALLOC (*root, struct Node, 1);
-    //CALLOC ((*root)->data, char, DATA_SIZE);
+    CHECK_PTR (file_input);
 
+    CALLOC (*root, struct Node, 1);
     FOPEN (file_p, file_input, "rb");
     size_t file_size = file_size_measure (file_p);        // measures the size of a text
-    printf ("size of file: %d\n", file_size);
-
     char* text_data = NULL;
     CALLOC (text_data, char, file_size + 1);
 
@@ -31,8 +29,8 @@ int get_database (struct Node** root, char* file_input)   // get data of tree in
     }
     fclose (file_p);
 
-    for (int i = 0; i < file_size; i++)
-        printf ("%c", text_data[i]);
+    //for (int i = 0; i < file_size; i++)
+    //    printf ("%c", text_data[i]);
 
     construct_data_nodes (*root, text_data, file_size);
 
@@ -44,20 +42,18 @@ int construct_data_nodes (struct Node* root, char* text_data, size_t file_size)
     struct Node* prev_node = NULL;
     struct stack stk       = {0};
 
-    printf (" DATA_BASE \n");
+    //printf (" DATA_BASE \n");
     stack_ctor (&stk, 2);
     for (int i = 0, position = ROOT; i < file_size; i++)
     {
-        if (text_data[i] == '{' && position == ROOT)  // add a root of the tree
+        if (text_data[i] == '{' && position == ROOT)    // add a root of the tree
         {
             char elem[MAX_OP_SIZE] = {0};
 
             SKIP_SYMBOLS (text_data[i]);
-
             GET_NODE_TYPE (root);
 
             SKIP_SYMBOLS (text_data[i]);
-
             get_node_data (text_data, &i, root);
 
             stack_push (&stk, (void**) &root);
@@ -65,7 +61,7 @@ int construct_data_nodes (struct Node* root, char* text_data, size_t file_size)
             position = LEFT;
         }
 
-        if (text_data[i] == '{')                      // add node in tree
+        if (text_data[i] == '{')                        // add node in tree
         {
             char         elem[MAX_OP_SIZE] = {0};
             struct Node* node              = NULL;
@@ -73,25 +69,21 @@ int construct_data_nodes (struct Node* root, char* text_data, size_t file_size)
             CALLOC (node, struct Node, 1);
 
             SKIP_SYMBOLS (text_data[i]);
-
             GET_NODE_TYPE (node);
 
             SKIP_SYMBOLS (text_data[i]);
-
             get_node_data (text_data, &i, node);
 
             stack_pop (&stk, (void**) &prev_node);
 
-            if (position == LEFT)                     // add node as a left leaf
+            if (position == LEFT)                       // add node as a left leaf
                 prev_node->left = node;
-            else                                      // add node as a right leaf
+            else                                        // add node as a right leaf
                 prev_node->right = node;
 
-            while (text_data[i] != '{' && text_data[i] != '}')
-            {
-                i++;
-            }
-            if (text_data[i] == '{')                  // next node will be in a left position
+            SEARCH_FOR_END_TOKEN (text_data[i]);
+
+            if (text_data[i] == '{')                    // next node will be in a left position
             {
                 stack_push (&stk, (void**) &node);
                 stack_push (&stk, (void**) &node);
@@ -99,12 +91,11 @@ int construct_data_nodes (struct Node* root, char* text_data, size_t file_size)
             }
             i--;
         }
-        else if (text_data[i] == '}')                 // if a next node will be, it will stay in a right position
+        else if (text_data[i] == '}')                   // if a next node will be, it will stay in a right position
         {
             position = RIGHT;
         }
     }
-    printf ("\n");
     stack_dtor (&stk);
 
     return SUCCESS;
@@ -112,82 +103,61 @@ int construct_data_nodes (struct Node* root, char* text_data, size_t file_size)
 
 int get_node_data (char* text_data, int* i, struct Node* node)
 {
+    CHECK_PTR (text_data);
+    CHECK_PTR (i);
+    CHECK_PTR (node);
+
     switch (node->type)
     {
         case T_NUM:
+        {
+            char num_sign = '+';
+            if (text_data[*i] == '-')
+            {
+                num_sign = '-';
+                *i += 1;
+            }
             while ('0' <= text_data[*i] && text_data[*i] <= '9')
             {
                 int prev_num = node->data.value;
-                node->data.value = prev_num * 10 + (text_data[*i] - '0');
+                if (num_sign == '+')
+                    node->data.value = prev_num * 10 + (text_data[*i] - '0');
+                else
+                    node->data.value = prev_num * 10 - (text_data[*i] - '0');
                 *i += 1;
             }
-            printf ("num [%d]\n", node->data.value);
             break;
+        }
 
         case T_VAR:
-            {
-                char str[MAX_STR_SIZE] = {0};
-                int j = 0;
-                while (isalpha (text_data[*i]))
-                {
-                    str[j++] = text_data[*i];
-                    *i += 1;
-                }
-                CALLOC (node->data.var, char, MAX_STR_SIZE);
-                strcpy (node->data.var, str);
-                printf ("var [%s]\n", node->data.var);
-                break;
-            }
+            ADD_VARIABLE (node->data);
+            break;
+
         case T_OP:
-            node->data.op = text_data[*i];
-            *i += 1;
-            printf ("op [%c]\n", node->data.op);
+            ADD_OP (node->data);
             break;
 
         case T_OP_LONG:
-            {
-                char str[MAX_STR_SIZE] = {0};
-                int j = 0;
-                while (isalpha (text_data[*i]))
-                {
-                    str[j++] = text_data[*i];
-                    *i += 1;
-                }
-                CALLOC (node->data.op_long, char, MAX_STR_SIZE);
-                strcpy (node->data.op_long, str);
-                printf ("op_long [%s]\n", node->data.op_long);
-                break;
-            }
+           ADD_LONG_OP (node->data);
+           break;
+
         case T_FUNC:
-            {
-                char str[MAX_STR_SIZE] = {0};
-                int j = 0;
-                while (isalpha (text_data[*i]))
-                {
-                    str[j++] = text_data[*i];
-                    *i += 1;
-                }
-                CALLOC (node->data.func, char, MAX_STR_SIZE);
-                strcpy (node->data.func, str);
-                printf ("func [%s]\n", node->data.func);
-                break;
-            }
+           ADD_FUNCTION (node->data);
+           break;
+
         case T_KEY_W:
             node->data.key_w = text_data[*i];
             *i += 1;
-            printf ("key_w [%c]\n", node->data.key_w);
             break;
 
         case T_CBR_O:
             node->data.br_o = text_data[*i];
             *i += 1;
-            printf ("br_o [%c]\n", node->data.br_o);
             break;
 
         case T_CBR_C:
             node->data.br_c = text_data[*i];
             *i += 1;
-            printf ("br_c [%c]\n", node->data.br_c);
             break;
 
         case T_IF_:
@@ -201,28 +171,23 @@ int get_node_data (char* text_data, int* i, struct Node* node)
                 }
                 CALLOC (node->data.if_, char, MAX_OP_SIZE);
                 strcpy (node->data.if_, str);
-                printf ("if [%s]\n", node->data.if_);
                 break;
             }
-
         case T_SIGN:
             {
                 char str[MAX_OP_SIZE] = {0};
                 int j = 0;
-                while ('<' <= text_data[*i] && text_data[*i] <= '>' && j < 2)
+                while ((('<' <= text_data[*i] && text_data[*i] <= '>') ||text_data[*i] == '!') && j < 2)
                 {
                     str[j++] = text_data[*i];
                     *i += 1;
                 }
                 CALLOC (node->data.sign, char, MAX_OP_SIZE);
                 strcpy (node->data.sign, str);
-                printf ("sign [%s]\n", node->data.sign);
                 break;
             }
-
         case DEFUALT:
             {
-                //printf ("def\n");
                 char str[MAX_STR_SIZE] = {0};
                 int j = 0;
                 while (isalpha (text_data[*i]))
@@ -230,7 +195,6 @@ int get_node_data (char* text_data, int* i, struct Node* node)
                     str[j++] = text_data[*i];
                     *i += 1;
                 }
-                printf ("def [%s]\n", str);
                 break;
             }
     }
@@ -245,7 +209,6 @@ size_t file_size_measure (FILE* const file_p)
     int start_position = ftell (file_p);
     fseek (file_p, 0, SEEK_END);
     size_t len = (size_t) ftell (file_p);
-
     fseek (file_p, start_position, SEEK_SET);
 
     return len;
@@ -293,7 +256,7 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
             PRINT_GR_LEAF ("%s ()", func);
         else if (node->type == DEFUALT)
         {
-            char* null = "null";
+            char null[] = "null";
             PRINT_GR_SIGN ("%s", null);
         }
     }
