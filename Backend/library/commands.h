@@ -37,6 +37,16 @@ enum Class_operation
     OP_SQRT = 14,
 };
 
+enum SIGNS
+{
+    B  = 1, // >
+    A  = 2, // <
+    E  = 3, // ==
+    BE = 4, // <=
+    AE = 5, // >=
+    NE = 6, // !=
+};
+
 struct element
 {
    char name[MAX_OP_SIZE];
@@ -88,8 +98,8 @@ const int SIGN_NUM = sizeof (array_sign) / sizeof (array_sign[0]);
 struct Variable
 {
     char name[MAX_STR_SIZE];
-    int  value;
-    int  code;
+    //int  value;
+    int  adr;
 };
 
 struct Variables
