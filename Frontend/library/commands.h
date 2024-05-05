@@ -54,14 +54,6 @@ enum Class_operation
     OP_SQRT = 14,
 };
 
-/*enum Class_key_word
-{
-    equal    = '=',
-    skobe_op = '{',
-    skobe_cl = '}',
-    str_end  = ';',
-};*/
-
 struct element
 {
    char name[MAX_OP_SIZE];

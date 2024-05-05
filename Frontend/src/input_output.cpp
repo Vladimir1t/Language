@@ -62,10 +62,11 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
         else if (node->type == T_FUNC)
             PRINT_GR ("%s ()", func);
         else if (node->type == T_SIGN)
-            //printf ("[[%s]]\n",  node->data.sign);
-            for (int i = 0; i < SIGN_NUM; i++)
-                if (!strcmp (node->data.sign, array_sign[i].name))
-                    PRINT_GR_SIGN ("sign %s", array_sign[i].code);
+            PRINT_GR (" \\%s ", sign);
+
+            //for (int i = 0; i < SIGN_NUM; i++)
+            //    if (!strcmp (node->data.sign, array_sign[i].name))
+            //        PRINT_GR_SIGN ("sign %s", array_sign[i].code);
     }
 
     node->num_in_tree = *node_num;
