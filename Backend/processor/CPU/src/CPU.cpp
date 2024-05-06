@@ -27,88 +27,71 @@ int ExecuteCommands (FILE* resultF, struct Cpu* proc)
 
     for (size_t IP = 0; IP < proc->arraySize; IP += COM_SIZE)
     {
-       char command = GetCommand (proc, IP);
-       elem_t* arg = GetArgument (proc, IP, proc->arrayCommand[IP + 1] & MASK);
+       char    command = GetCommand  (proc, IP);
+       elem_t* arg     = GetArgument (proc, IP, proc->arrayCommand[IP + 1] & MASK);
 
         switch (command)
         {
             case PUSH:
                 PUSH_COM (arg);
                 break;
-
             case POP:
                 POP_COM (arg);
                 break;
-
             case ADD:
                 MATH_COM (ADD, +);
                 break;
-
             case SUB:
                 MATH_COM (SUB, -);
                 break;
-
             case DIV:
                 MATH_COM (DIV, /);
                 break;
-
             case MUL:
                 MATH_COM (MUL, *);
                 break;
-
             case SQRT:
                 MATH_SQRT (SQRT);
                 break;
-
             case OUT:
                 OUT_COM ();
                 break;
-
             case IN:
                 IN_COM ();
                 break;
-
             case HLT:
                 HLT_COM ();
                 break;
-
             case JMP:
                 IP = JumpTo (proc, IP);
                 break;
-
             case JB:
                 JUMP (JB, <);
                 break;
-
             case JBE:
                 JUMP (JBE, <=);
                 break;
-
             case JA:
                 JUMP (JA, >);
                 break;
-
             case JAE:
                 JUMP (JAE, >=);
                 break;
-
             case JE:
                 JUMP (JE, ==);
                 break;
-
             case JNE:
                 JUMP (JNE, !=);
                 break;
-
             case CALL:
                 CALL_COM (IP);
                 break;
-
             case RET:
                 RET_COM (IP);
                 break;
         }
     }
+
     fclose (resultF);
     CpuDtor (proc);
 
@@ -117,13 +100,13 @@ int ExecuteCommands (FILE* resultF, struct Cpu* proc)
 
 void CpuCtor (Cpu* proc)
 {
-    StackCtor (&proc->stk, 10);        // construct Stack of arguments
-    StackCtor (&proc->stkAdr, 2);     // construct Stack of addresses
+    StackCtor (&proc->stkAdr, 2);         // construct Stack of addresses
+    StackCtor (&proc->stk, 10);           // construct Stack of arguments
 
-    proc->arrayCommand = NULL;        // buffer
-    proc->arraySize = 0;              // size of buffer
+    proc->arrayCommand = NULL;            // buffer
+    proc->arraySize = 0;                  // size of buffer
 
-    proc->ramSize = RAM_SIZE;         // construct random access memory
+    proc->ramSize = RAM_SIZE;             // construct random access memory
     proc->ram = (elem_t*) calloc (RAM_SIZE, sizeof(elem_t));
     for (size_t i = 0; i < proc->ramSize; i++)
         proc->ram[i] = POISON;
@@ -150,7 +133,7 @@ int FillArray (struct Cpu* proc, char* fileSourse)
     struct Strings Str = {0};
     FOPEN (bytecode, fileSourse, "rb");
 
-    Str.fileSize = FileSize (bytecode);   // measure the size of a bytecode
+    Str.fileSize = FileSize (bytecode);            // measure the size of a bytecode
 
     proc->arraySize = Str.fileSize;
     CALLOC (proc->arrayCommand, char, proc->arraySize);
@@ -171,7 +154,6 @@ void GetDigits (struct Cpu* proc, elem_t* num2, elem_t* num1)
 size_t JumpTo (struct Cpu* proc, size_t IP)
 {
     elem_t address =  *(elem_t*) (proc->arrayCommand + IP + COM_SIZE) - COM_SIZE;
-    //printf ("[%d]", address);
     return address;
 }
 
@@ -193,7 +175,7 @@ elem_t* GetArgument (struct Cpu* proc, size_t IP, char mode)
             for (int j = 0; j < REGISTRS_NUM; j++)
             {
                 if (*(elem_t*) (proc->arrayCommand + IP + COM_SIZE) ==
-                    (elem_t)   reg[j].name[1] - (elem_t) reg[j].name[0])
+                     (elem_t)  reg[j].name[1] - (elem_t) reg[j].name[0])
                     return &reg[j].value;
             }
             break;
