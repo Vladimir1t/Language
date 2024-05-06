@@ -35,13 +35,6 @@
     if (ptr == NULL)                 \
         return OPEN_ERROR;
 
-#define NEXT_NODE(next)              \
-    do                               \
-    {                                \
-        CALLOC (next, Node, 1);      \
-    }                                \
-    while(0)
-
 #define SUBTREE_DTOR(node)      \
     do                          \
     {                           \
@@ -72,6 +65,12 @@
     tokens->array_tokens[tokens->size].type = IF_;                                 \
     CALLOC (tokens->array_tokens[tokens->size].data.if_, char, MAX_STR_SIZE);      \
     strcpy (tokens->array_tokens[tokens->size].data.if_, str);                     \
+    tokens->size += 1;
+
+#define ADD_WHILE(...)                                                                \
+    tokens->array_tokens[tokens->size].type = WHILE;                                  \
+    CALLOC (tokens->array_tokens[tokens->size].data.while_, char, MAX_STR_SIZE);      \
+    strcpy (tokens->array_tokens[tokens->size].data.while_, str);                     \
     tokens->size += 1;
 
 #define ADD_VARIABLE(...)                                                       \

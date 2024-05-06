@@ -16,7 +16,6 @@
 //#include "..\Processor\include\assembler.h"
 //#include "..\Processor\include\CPU.h"
 
-
 enum POSITION
 {
     LEFT  = 0,
@@ -36,6 +35,7 @@ union node_data
     char*         func;     // in, out
     char*         if_;      // if
     char*         sign;     // <, >, ==, etc
+    char*         while_;
 };
 
 struct Node

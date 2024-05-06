@@ -16,6 +16,7 @@ enum Class_type
     T_FUNC    =  7,
     T_IF_     =  8,
     T_SIGN    =  9,
+    T_WHILE   =  10,
     DEFUALT   = -1,
 };
 
@@ -33,7 +34,8 @@ enum token_t
     IF_   = 10,
     FUNC  = 11,
     SIGN  = 12,
-    END   = 13,
+    WHILE = 13,
+    END   = 14,
 };
 
 enum Class_operation

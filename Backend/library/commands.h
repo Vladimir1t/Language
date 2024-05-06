@@ -16,6 +16,7 @@ enum Class_type
     T_FUNC    =  7,
     T_IF_     =  8,
     T_SIGN    =  9,
+    T_WHILE   = 10,
     DEFUALT   = -1,
 };
 

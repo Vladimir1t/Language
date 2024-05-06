@@ -35,6 +35,7 @@ union node_data
     char*         func;     // in, out
     char*         if_;      // if
     char*         sign;     // <, >, ==, etc
+    char*         while_;   // while 
 };
 
 struct Node
@@ -58,6 +59,7 @@ union Data
     char*         func;    // in, out
     char*         if_;     // if
     char*         sign;    // <, >, ==, <= etc
+    char*         while_;  // while
     char          end;     // \0
 };
 
