@@ -2,11 +2,11 @@
 
 static FILE* error_file = fopen ("log\\error_file_input_output.txt", "w");
 
-static int construct_data_nodes (struct Node* root, char* text_data, size_t file_size);
-static int get_node_data (char* text_data, int* i, struct Node* node);
-static size_t file_size_measure (FILE* const file_p);
+static int    construct_data_nodes (struct Node* root, char* text_data, size_t file_size);
+static int    get_node_data        (char* text_data, int* i, struct Node* node);
+static size_t file_size_measure    (FILE* const file_p);
 
-static int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num);
+static int add_node_in_graph       (struct Node* node, FILE* file_graph, size_t* node_num);
 static int add_connection_in_graph (struct Node* node, FILE* file_graph);
 
 static void dump_node (struct Node *node);
@@ -28,9 +28,6 @@ int get_database (struct Node** root, char* file_input)   // get data of tree in
         return ERROR;
     }
     fclose (file_p);
-
-    //for (int i = 0; i < file_size; i++)
-    //    printf ("%c", text_data[i]);
 
     construct_data_nodes (*root, text_data, file_size);
 
@@ -171,6 +168,19 @@ int get_node_data (char* text_data, int* i, struct Node* node)
                 strcpy (node->data.if_, str);
                 break;
             }
+        case T_WHILE:
+            {
+                char str[MAX_STR_SIZE] = {0};
+                int j = 0;
+                while (isalpha (text_data[*i]))
+                {
+                    str[j++] = text_data[*i];
+                    *i += 1;
+                }
+                CALLOC (node->data.while_, char, MAX_OP_SIZE);
+                strcpy (node->data.while_, str);
+                break;
+            }
         case T_SIGN:
             {
                 char str[MAX_OP_SIZE] = {0};
@@ -268,6 +278,8 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
             PRINT_GR ("%c", key_w);
         else if (node->type == T_IF_)
             PRINT_GR ("%s", if_);
+        else if (node->type == T_WHILE)
+            PRINT_GR ("%s", while_);
         else if (node->type == T_FUNC)
             PRINT_GR ("%s ()", func);
         else if (node->type == T_SIGN)
@@ -319,6 +331,8 @@ int tree_output (struct Node* node, FILE* file_output)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.var);
     else if (node->type == T_IF_)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.if_);
+    else if (node->type == T_WHILE)
+        fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.while_);
     else if (node->type == T_FUNC)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.func);
     else if (node->type == T_SIGN)
@@ -362,6 +376,8 @@ void dump_node (struct Node *node)
         printf ("# %s #", node->data.var);
     else if (node->type == T_IF_)
         printf ("# %s #", node->data.if_);
+    else if (node->type == T_WHILE)
+        printf ("# %s #", node->data.while_);
     else if (node->type == T_FUNC)
         printf ("# %s #", node->data.func);
     else if (node->type == T_SIGN)

@@ -6,7 +6,7 @@ static int get_tokens (struct Tokens* tokens, const char* text_data);
 
 static struct Node* get_g         (struct Tokens* tokens, size_t* ptr);
 static struct Node* get_equation  (struct Tokens* tokens, size_t* ptr);
-static struct Node* get_ass       (struct Tokens* tokens, size_t* ptr);
+static struct Node* get_assign    (struct Tokens* tokens, size_t* ptr);
 static struct Node* get_condition (struct Tokens* tokens, size_t* ptr);
 static struct Node* get_body      (struct Tokens* tokens, size_t* ptr);
 static struct Node* get_e         (struct Tokens* tokens, size_t* ptr);
@@ -77,7 +77,7 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
 
     int ptr = 0;
     while (1)
-    {//
+    {
         if (tokens->size == tokens->capacity)
         {
             INCREASE_CAPACITY (tokens);
@@ -88,8 +88,15 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
             int i = 0;
             while (isalpha (text_data[ptr]))
                 str[i++] = text_data[ptr++];
-
-            if (text_data[ptr] == '(')             // function
+            if (!strcmp (str, "if"))
+            {
+                ADD_IF_ (tokens);
+            }
+            else if (!strcmp (str, "while"))
+            {
+                ADD_WHILE (tokens);
+            }
+            else if (text_data[ptr] == '(')             // function
             {
                 for (int j = 0; j < OP_NUM; j++)
                     if (!strcmp (str, array_op[j].name))
@@ -101,10 +108,6 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
                     {
                         ADD_FUNCTION (tokens);
                     }
-                if (!strcmp (str, "if"))
-                {
-                    ADD_IF_ (tokens);
-                }
             }
             else
             {
@@ -183,15 +186,15 @@ struct Node* get_equation (struct Tokens* tokens, size_t* ptr)
     assert (ptr != NULL);
 
     //printf ("Eq\n");
-    unsigned char str_end = ';';
-    struct Node*  first_node = create_node (T_KEY_W, &str_end, get_ass (tokens, ptr), NULL);
-    struct Node*  value_1 = first_node;
-    struct Node*  value_2 = NULL;
+    unsigned char str_end    = ';';
+    struct Node*  first_node = create_node (T_KEY_W, &str_end, get_assign (tokens, ptr), NULL);
+    struct Node*  value_1    = first_node;
+    struct Node*  value_2    = NULL;
 
     while (IS_STR_END)
     {
         *ptr += 1;
-        struct Node* value_2 = get_ass (tokens, ptr);
+        value_2 = get_assign (tokens, ptr);
         if (IS_STR_END)
         {
             value_2 = create_node (T_KEY_W, &str_end, value_2, NULL);
@@ -203,7 +206,7 @@ struct Node* get_equation (struct Tokens* tokens, size_t* ptr)
     return first_node;
 }
 
-struct Node* get_ass (struct Tokens* tokens, size_t* ptr)
+struct Node* get_assign (struct Tokens* tokens, size_t* ptr)
 {
     assert (tokens != NULL);
     assert (ptr != NULL);
@@ -249,10 +252,11 @@ struct Node* get_ass (struct Tokens* tokens, size_t* ptr)
         else
             return syntax_error ();
     }
-    else if (value_1->type == T_IF_)
+    else if (value_1->type == T_IF_ || value_1->type == T_WHILE)
     {
         value_2 = get_condition (tokens, ptr);
         value_3 = get_body (tokens, ptr);
+
         value_1->left  = value_2;
         value_1->right = value_3;
     }
@@ -388,7 +392,6 @@ struct Node* get_p (struct Tokens* tokens, size_t* ptr)   //  (, )  and determin
 
     //printf ("P\n");
     struct Node* value = NULL;
-    //printf ("{%d}\n", tokens->array_tokens[*ptr].type);
     if (IS_BRACKET_O)
     {
         *ptr += 1;
@@ -405,7 +408,6 @@ struct Node* get_p (struct Tokens* tokens, size_t* ptr)   //  (, )  and determin
             }
         }
     }
-    //printf ("{%d}\n", tokens->array_tokens[*ptr].type);
     else if (IS_OP_LONG_OR_VAR)
         value = get_f (tokens, ptr);
 
@@ -470,7 +472,6 @@ struct Node* get_var (struct Tokens* tokens, size_t* ptr)
     //printf ("Var\n");
     struct Node* value = NULL;
 
-    //printf ("{var %s}\n", tokens->array_tokens[*ptr].data.var);
     if (tokens->array_tokens[*ptr].type == VAR)
     {
         value = create_node (T_VAR, tokens->array_tokens[*ptr].data.var, NULL, NULL);
@@ -479,6 +480,11 @@ struct Node* get_var (struct Tokens* tokens, size_t* ptr)
     else if (tokens->array_tokens[*ptr].type == IF_)
     {
         value = create_node (T_IF_, tokens->array_tokens[*ptr].data.if_, NULL, NULL);
+        *ptr += 1;
+    }
+    else if (tokens->array_tokens[*ptr].type == WHILE)
+    {
+        value = create_node (T_WHILE, tokens->array_tokens[*ptr].data.while_, NULL, NULL);
         *ptr += 1;
     }
     else if (tokens->array_tokens[*ptr].type == FUNC)
@@ -547,7 +553,6 @@ struct Node* create_node (Class_type type, void* data, struct Node* left, struct
         case T_VAR:
             new_node->data.var = (char*) calloc (MAX_STR_SIZE, sizeof (char));
             strcpy (new_node->data.var, (char*) data);
-            //printf ("[%s]\n", new_node->data.var);
             break;
 
          case T_KEY_W:
@@ -567,6 +572,11 @@ struct Node* create_node (Class_type type, void* data, struct Node* left, struct
         case T_IF_:
             new_node->data.if_ = (char*) calloc (MAX_STR_SIZE, sizeof (char));
             strcpy (new_node->data.if_, (char*) data);
+            break;
+
+        case T_WHILE:
+            new_node->data.while_ = (char*) calloc (MAX_STR_SIZE, sizeof (char));
+            strcpy (new_node->data.while_, (char*) data);
             break;
 
         case T_SIGN:

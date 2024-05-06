@@ -59,6 +59,8 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
             PRINT_GR ("%c", key_w);
         else if (node->type == T_IF_)
             PRINT_GR ("%s", if_);
+        else if (node->type == T_WHILE)
+            PRINT_GR ("%s", while_);
         else if (node->type == T_FUNC)
             PRINT_GR ("%s ()", func);
         else if (node->type == T_SIGN)
@@ -116,6 +118,8 @@ int tree_output (struct Node* node, FILE* file_output)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.var);
     else if (node->type == T_IF_)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.if_);
+    else if (node->type == T_WHILE)
+        fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.while_);
     else if (node->type == T_FUNC)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.func);
     else if (node->type == T_OP_LONG)
@@ -166,6 +170,8 @@ void dump_node (struct Node *node)
 
     else if (node->type == T_IF_)
         printf ("# %s #", node->data.if_);
+    else if (node->type == T_WHILE)
+        printf ("# %s #", node->data.while_);
     else if (node->type == T_FUNC)
         printf ("# %s #", node->data.func);
     else if (node->type == T_SIGN)

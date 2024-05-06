@@ -7,6 +7,7 @@ static int make_asm_code      (struct Node* node, struct Variables* variables, F
 static int add_str_end_asm    (struct Node* node, FILE* asm_file, struct Variables* variables);
 static int add_assignment_asm (struct Node* node, FILE* asm_file, struct Variables* variables);
 static int add_if_asm         (struct Node* node, FILE* asm_file, struct Variables* variables);
+static int add_while_asm      (struct Node* node, FILE* asm_file, struct Variables* variables);
 static int add_func_asm       (struct Node* node, FILE* asm_file, struct Variables* variables);
 
 static int define_sign    (char* sign);
@@ -111,6 +112,10 @@ int make_asm_code (struct Node* node, struct Variables* variables, FILE* asm_fil
     {
         add_if_asm (node, asm_file, variables);
     }
+    else if (node->type == T_WHILE)
+    {
+        add_while_asm (node, asm_file, variables);
+    }
     else if (node->type == T_FUNC)
     {
         add_func_asm (node, asm_file, variables);
@@ -173,6 +178,52 @@ int add_if_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
         switch (define_sign (node->left->data.sign))
         {
             case B:
+                fprintf (asm_file, "jae lb_%d:  # if\n", label_num);
+                break;
+            case A:
+                fprintf (asm_file, "jbe lb_%d:  # if\n", label_num);
+                break;
+            case E:
+                fprintf (asm_file, "jne lb_%d:  # if\n", label_num);
+                break;
+            case BE:
+                fprintf (asm_file, "ja lb_%d:  # if\n", label_num);
+                break;
+            case AE:
+                fprintf (asm_file, "jb lb_%d:  # if\n", label_num);
+                break;
+            case NE:
+                fprintf (asm_file, "je lb_%d:  # if\n", label_num);
+                break;
+        }
+        int label = label_num++;
+        if (node->right != NULL && node->right->type != DEFUALT)
+            make_asm_code (node->right, variables, asm_file);
+        fprintf (asm_file, "lb_%d:\n", label);
+    }
+    else
+        return ERROR;
+}
+
+int add_while_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
+{
+    //printf ("if\n");
+    if (node->left != NULL && node->left->type == T_SIGN)
+    {
+        printf ("[%s]\n", node->left->data.sign);
+
+        int first_label = label_num++;
+        fprintf (asm_file, "lb_%d:   # while\n", first_label);
+
+        if (node->left->left != NULL && node->left->left->type != DEFUALT)
+            make_asm_code (node->left->left, variables, asm_file);
+        if (node->left->right != NULL && node->left->right->type != DEFUALT)
+            make_asm_code (node->left->right, variables, asm_file);
+
+
+        switch (define_sign (node->left->data.sign))
+        {
+            case B:
                 fprintf (asm_file, "jae lb_%d:\n", label_num);
                 break;
             case A:
@@ -194,6 +245,9 @@ int add_if_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
         int label = label_num++;
         if (node->right != NULL && node->right->type != DEFUALT)
             make_asm_code (node->right, variables, asm_file);
+
+        fprintf (asm_file, "jmp lb_%d:  # jump to start of while\n", first_label);
+
         fprintf (asm_file, "lb_%d:\n", label);
     }
     else
@@ -258,7 +312,7 @@ int define_sign (char* sign)
 int define_op_long (char* op)
 {
     CHECK_PTR (op);
-    
+
     if (!strcmp (op, "cos"))
         return OP_COS;
     else if (!strcmp (op, "sin"))
