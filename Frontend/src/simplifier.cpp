@@ -11,7 +11,7 @@ int calculator (struct Node* tree, int* is_var_in_subtree)
     if (tree == NULL)
         return ERROR;
 
-    if (tree->type == T_VAR)  // if there is a variable in subtree
+    if (tree->type == T_VAR)       // if there is a variable in subtree
         *is_var_in_subtree = 1;
 
     if (*is_var_in_subtree == 1)
