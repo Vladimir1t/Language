@@ -9,16 +9,17 @@ FLAGS = -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equa
 
 TARGET = Language
 CC = g++
+program = text_files\factorial.txt
 
 all: frontend backend cpu asm
-	Frontend\frontend.exe text_files\sourse_file.txt
+	Frontend\frontend.exe $(program)
 	Backend\backend.exe text_files\file_output.txt text_files\asm_file.txt
 	Backend\processor\Assembler\assembler.exe  text_files\asm_file.txt  Backend\processor\Assembler\res_ass.txt
 	Backend\processor\CPU\cpu.exe  Backend\processor\Assembler\res_ass.txt  text_files\result_file.txt
 
 # Frontend
 front: frontend
-	Frontend\frontend.exe text_files\sourse_file.txt
+	Frontend\frontend.exe $(program)
 
 frontend: Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
 	$(CC) -o Frontend\frontend Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
