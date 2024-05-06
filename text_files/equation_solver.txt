@@ -6,12 +6,6 @@ in(i);
 anyNum  =  888;
 noRoots = -111;
 
-kick ball  <= 12)
-{
-    out(i);
-    i = i + 1;
-};
-
 if (a == 0)
 {
     if (c == 0)

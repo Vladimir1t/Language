@@ -1,0 +1,27 @@
+in(n);
+
+undef = -111;
+fact  = 1;
+
+if (n <= 1)
+{
+    if (n < 0)
+    {
+        fact = undef;
+        out(fact);
+    };
+    if (n >= 0)
+    {
+        fact = 1;
+        out(fact);
+    };
+};
+if (n > 1)
+{
+    while (n > 0)
+    {
+        fact = fact * n;
+        n = n - 1;
+    };
+    out(fact);
+};
