@@ -58,49 +58,51 @@ enum Class_operation
 
 struct element
 {
-   char name[MAX_OP_SIZE];
-   int  code;
+    char name_std[MAX_OP_SIZE];
+    int  code;
+    char name[MAX_STR_SIZE];
 };
 
 static struct element array_op[] =
 {
-    {"+",    OP_ADD},
-    {"-",    OP_SUB},
-    {"*",    OP_MUL},
-    {"/",    OP_DIV},
-    {"sin",  OP_SIN},
-    {"cos",  OP_COS},
-    {"tg",   OP_TG},
-    {"ctg",  OP_CTG},
-    {"ln",   OP_LN},
-    {"sh",   OP_SH},
-    {"ch",   OP_CH},
-    {"^",    OP_DEG},
-    {"exp",  OP_EXP},
-    {"sqrt", OP_SQRT}
+    {"+",    OP_ADD,},
+    {"-",    OP_SUB,},
+    {"*",    OP_MUL,},
+    {"/",    OP_DIV,},
+    {"sin",  OP_SIN,},
+    {"cos",  OP_COS,},
+    {"tg",   OP_TG,},
+    {"ctg",  OP_CTG,},
+    {"ln",   OP_LN,},
+    {"sh",   OP_SH,},
+    {"ch",   OP_CH,},
+    {"^",    OP_DEG,},
+    {"exp",  OP_EXP,},
+    {"sqrt", OP_SQRT,}
 };
 const int OP_NUM = sizeof (array_op) / sizeof (array_op[0]);
 
 static struct element array_func[] =
 {
-    {"in",  1},
-    {"out", 2},
+    {"in",  1, "Kick_off"},
+    {"out", 2, "Change"},
 };
 const int FUNC_NUM = sizeof (array_func) / sizeof (array_func[0]);
 
 struct elem_sign
 {
-    char name[MAX_OP_SIZE];
+    char name_std[MAX_OP_SIZE];
     char code[MAX_OP_SIZE];
+    char name[MAX_STR_SIZE];
 };
 static struct elem_sign array_sign[] =
 {
-    {"<",  "b"},
-    {">",  "a"},
-    {"==", "e"},
-    {"<=", "be"},
-    {">=", "ae"},
-    {"!=", "ne"}
+    {"<",  "b",  "red_cards"},
+    {">",  "a",  "yellow_cards"},
+    {"==", "e",  "assists"},
+    {"<=", "be", "goals"},
+    {">=", "ae", "ball_touch"},
+    {"!=", "ne", "loose"}
 };
 const int SIGN_NUM = sizeof (array_sign) / sizeof (array_sign[0]);
 

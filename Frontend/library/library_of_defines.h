@@ -48,29 +48,33 @@
     REALLOC (tokens->array_tokens, struct Token, tokens->capacity);
 
 #define ADD_LONG_OP(...)                                                            \
+    flag = 1;                                                                       \
     tokens->array_tokens[tokens->size].type = OP_L;                                 \
     CALLOC (tokens->array_tokens[tokens->size].data.op_long, char, MAX_STR_SIZE);   \
-    strcpy (tokens->array_tokens[tokens->size].data.op_long, str);                  \
+    strcpy (tokens->array_tokens[tokens->size].data.op_long, array_op[j].name_std); \
     tokens->size += 1;                                                              \
     break;
 
 #define ADD_FUNCTION(...)                                                           \
+    flag = 1;                                                                       \
     tokens->array_tokens[tokens->size].type = FUNC;                                 \
     CALLOC (tokens->array_tokens[tokens->size].data.func, char, MAX_STR_SIZE);      \
-    strcpy (tokens->array_tokens[tokens->size].data.func, str);                     \
+    strcpy (tokens->array_tokens[tokens->size].data.func, array_func[j].name_std);  \
     tokens->size += 1;                                                              \
     break;
 
 #define ADD_IF_(...)                                                               \
+    flag = 1;                                                                      \
     tokens->array_tokens[tokens->size].type = IF_;                                 \
     CALLOC (tokens->array_tokens[tokens->size].data.if_, char, MAX_STR_SIZE);      \
-    strcpy (tokens->array_tokens[tokens->size].data.if_, str);                     \
+    strcpy (tokens->array_tokens[tokens->size].data.if_, "if");                    \
     tokens->size += 1;
 
 #define ADD_WHILE(...)                                                                \
+    flag = 1;                                                                         \
     tokens->array_tokens[tokens->size].type = WHILE;                                  \
     CALLOC (tokens->array_tokens[tokens->size].data.while_, char, MAX_STR_SIZE);      \
-    strcpy (tokens->array_tokens[tokens->size].data.while_, str);                     \
+    strcpy (tokens->array_tokens[tokens->size].data.while_, "while");                 \
     tokens->size += 1;
 
 #define ADD_VARIABLE(...)                                                       \
@@ -79,22 +83,12 @@
     strcpy (tokens->array_tokens[tokens->size].data.var, str);                  \
     tokens->size += 1;
 
-#define ADD_SIGN(...)                                                                                \
-    char str[MAX_OP_SIZE] = {0};                                                                     \
-    int i = 0;                                                                                       \
-    while ((('<' <= text_data[ptr] && text_data[ptr] <= '>') || text_data[ptr] == '!') && i < 2)     \
-        str[i++] = text_data[ptr++];                                                                 \
-    if (!strcmp (str, "="))                                                                          \
-    {                                                                                                \
-        ADD_TOKEN (KEY_W, key_w, '=');                                                               \
-    }                                                                                                \
-    else                                                                                             \
-    {                                                                                                \
-        tokens->array_tokens[tokens->size].type = SIGN;                                              \
-        CALLOC (tokens->array_tokens[tokens->size].data.sign, char, MAX_OP_SIZE);                    \
-        strcpy (tokens->array_tokens[tokens->size].data.sign, str);                                  \
-        tokens->size += 1;                                                                           \
-    }
+#define ADD_SIGN(...)                                                                            \
+    flag = 1;                                                                                    \
+    tokens->array_tokens[tokens->size].type = SIGN;                                              \
+    CALLOC (tokens->array_tokens[tokens->size].data.sign, char, MAX_OP_SIZE);                    \
+    strcpy (tokens->array_tokens[tokens->size].data.sign, array_sign[j].name_std);               \
+    tokens->size += 1;                                                                           \
 
 #define ADD_NUMBER(...)                                                                                      \
     tokens->array_tokens[tokens->size].type = NUM;                                                           \
@@ -126,8 +120,7 @@
 #define ADD_TOKEN(token_t, data_type, elem)                              \
     tokens->array_tokens[tokens->size].type = token_t;                   \
     tokens->array_tokens[tokens->size].data.data_type = elem;            \
-    tokens->size += 1;                                                   \
-    ptr++;
+    tokens->size += 1;                                                   
 
 #define PRINT_GR_LEAF(spec, elem)                                                                                                                    \
     fprintf (file_graph, " %d [shape = Mrecord, style = filled, fillcolor = YellowGreen, label = \"" spec "\" ];\n", *node_num, node->data.elem)     \

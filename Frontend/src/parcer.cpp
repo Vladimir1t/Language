@@ -2,6 +2,17 @@
 
 static FILE* error_file = fopen ("Frontend\\log\\parcer_error.txt", "w");
 
+#define IS_NUM isdigit (text_data[ptr]) || (text_data[ptr] == '-' && (isdigit (text_data[ptr + 1])))
+#define IS_STR_END tokens->array_tokens[*ptr].type == KEY_W && tokens->array_tokens[*ptr].data.key_w == ';'
+#define IS_SIGN_EQUAL value_1->type == T_VAR && tokens->array_tokens[*ptr].data.key_w == '='
+#define IS_BRACKET_C tokens->array_tokens[*ptr].type == BR_C && tokens->array_tokens[*ptr].data.br_c == ')'
+#define IS_BRACKET_O tokens->array_tokens[*ptr].type == BR_O && tokens->array_tokens[*ptr].data.br_o == '('
+#define IS_OP_LONG_OR_VAR tokens->array_tokens[*ptr].type == VAR || tokens->array_tokens[*ptr].type == OP_L
+#define IS_MUL_OR_DIV tokens->array_tokens[*ptr].data.op == '*' || tokens->array_tokens[*ptr].data.op == '/'
+#define IS_ADD_OR_SUB tokens->array_tokens[*ptr].data.op == '+' || tokens->array_tokens[*ptr].data.op == '-'
+#define IS_OP text_data[ptr] == '+' || text_data[ptr] == '-' || text_data[ptr] == '*' || text_data[ptr] == '/' || text_data[ptr] == '^'
+#define IS_SPEC_SYMBOL text_data[ptr] == ' ' || text_data[ptr] == '\n' || text_data[ptr] == '\r'
+
 static int get_tokens (struct Tokens* tokens, const char* text_data);
 
 static struct Node* get_g         (struct Tokens* tokens, size_t* ptr);
@@ -42,6 +53,9 @@ int get_database (struct Node** root, char* sourse_file)       // get data of tr
 
     struct Tokens tokens = {0};
     get_tokens (&tokens, text_data);
+
+    for (int i = 0; i < tokens.size; i++)
+        printf (".%d\n", tokens.array_tokens[i].type);
 
     size_t ptr = 0;
     *root = get_g (&tokens, &ptr);
@@ -85,36 +99,62 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
         if (isalpha(text_data[ptr]))
         {
             char str[MAX_STR_SIZE] = {0};
-            int i = 0;
-            while (isalpha (text_data[ptr]))
+            int i = 0, flag = 0;;
+            while (isalpha (text_data[ptr]) || text_data[ptr] == '_')
                 str[i++] = text_data[ptr++];
-            if (!strcmp (str, "if"))
+            printf ("[%s]\n", str);
+
+            if (!strcmp (str, "VAR"))              // if
             {
                 ADD_IF_ (tokens);
             }
-            else if (!strcmp (str, "while"))
+            else if (!strcmp (str, "Extra_time"))  // while
             {
                 ADD_WHILE (tokens);
             }
-            else if (text_data[ptr] == '(')             // function
+            for (int j = 0; j < SIGN_NUM; j++)
+            {
+                if (!strcmp (str, array_sign[j].name))
+                {
+                    ADD_SIGN (tokens);
+                }
+            }
+            for (int j = 0; j < FUNC_NUM; j++)
+            {
+                if (!strcmp (str, array_func[j].name))
+                {
+                    ADD_FUNCTION (tokens);
+                }
+            }
+            if (!strcmp (str, "score"))       // =
+            {
+                flag = 1;
+                ADD_TOKEN (KEY_W, key_w, '=');
+            }
+            else if (!strcmp (str, "match_start"))
+            {
+                flag = 1;
+                ADD_TOKEN (CBR_O, br_o, '{');
+            }
+            else if (!strcmp (str, "match_end"))
+            {
+                flag = 1;
+                ADD_TOKEN (CBR_C, br_c, '}');
+            }
+            else if (text_data[ptr] == '(')        // function
             {
                 for (int j = 0; j < OP_NUM; j++)
-                    if (!strcmp (str, array_op[j].name))
+                    if (!strcmp (str, array_op[j].name_std))
                     {
                         ADD_LONG_OP (tokens);
                     }
-                for (int i = 0; i < FUNC_NUM; i++)
-                    if (!strcmp (str, array_func[i].name))
-                    {
-                        ADD_FUNCTION (tokens);
-                    }
             }
-            else
+            if (flag == 0)
             {
                 ADD_VARIABLE (tokens);
             }
         }
-        else if (isdigit (text_data[ptr]) || (text_data[ptr] == '-' && (isdigit (text_data[ptr + 1]))))
+        else if (IS_NUM)
         {
             ADD_NUMBER (tokens);
         }
@@ -125,35 +165,35 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
         {
             ADD_END_OF_FILE (tokens);
         }
-        else if (('<' <= text_data[ptr] && text_data[ptr] <= '>') || text_data[ptr] == '!')
-        {
-            ADD_SIGN (tokens);
-        }
         else
         {
-            if (text_data[ptr] == '{')
+            /*if (text_data[ptr] == '{')
             {
                 ADD_TOKEN (CBR_O, br_o, text_data[ptr]);
             }
             else if (text_data[ptr] == '}')
             {
                 ADD_TOKEN (CBR_C, br_c, text_data[ptr]);
-            }
-            else if (text_data[ptr] == '(')
+            }*/
+            if (text_data[ptr] == '(')
             {
                 ADD_TOKEN (BR_O, br_o, text_data[ptr]);
+                ptr++;
             }
             else if (text_data[ptr] == ')')
             {
                 ADD_TOKEN (BR_C, br_c, text_data[ptr]);
+                ptr++;
             }
             else if (text_data[ptr] == ';')
             {
                 ADD_TOKEN (KEY_W, key_w, text_data[ptr]);
+                ptr++;
             }
             else if (IS_OP)
             {
                 ADD_TOKEN (OP, op, text_data[ptr]);
+                ptr++;
             }
             else
                 return ERROR;
@@ -502,7 +542,6 @@ struct Node* get_n (struct Tokens* tokens, size_t* ptr)   //determine numbers an
     assert (ptr != NULL);
 
     //printf ("N\n");
-    //printf ("{value %d}\n", tokens->array_tokens[*ptr].data.value);
     struct Node* value = (struct Node*) calloc (1, sizeof (struct Node));
 
     if (tokens->array_tokens[*ptr].type == NUM)
