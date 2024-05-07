@@ -13,16 +13,6 @@
 #include "..\library\commands.h"
 #include "simplifier.h"
 
-#define IS_STR_END tokens->array_tokens[*ptr].type == KEY_W && tokens->array_tokens[*ptr].data.key_w == ';'
-#define IS_SIGN_EQUAL value_1->type == T_VAR && tokens->array_tokens[*ptr].data.key_w == '='
-#define IS_BRACKET_C tokens->array_tokens[*ptr].type == BR_C && tokens->array_tokens[*ptr].data.br_c == ')'
-#define IS_BRACKET_O tokens->array_tokens[*ptr].type == BR_O && tokens->array_tokens[*ptr].data.br_o == '('
-#define IS_OP_LONG_OR_VAR tokens->array_tokens[*ptr].type == VAR || tokens->array_tokens[*ptr].type == OP_L
-#define IS_MUL_OR_DIV tokens->array_tokens[*ptr].data.op == '*' || tokens->array_tokens[*ptr].data.op == '/'
-#define IS_ADD_OR_SUB tokens->array_tokens[*ptr].data.op == '+' || tokens->array_tokens[*ptr].data.op == '-'
-#define IS_OP text_data[ptr] == '+' || text_data[ptr] == '-' || text_data[ptr] == '*' || text_data[ptr] == '/' || text_data[ptr] == '^'
-#define IS_SPEC_SYMBOL text_data[ptr] == ' ' || text_data[ptr] == '\n' || text_data[ptr] == '\r'
-
 union node_data
 {
     unsigned char op;       // +, -, * etc
@@ -35,7 +25,7 @@ union node_data
     char*         func;     // in, out
     char*         if_;      // if
     char*         sign;     // <, >, ==, etc
-    char*         while_;   // while 
+    char*         while_;   // while
 };
 
 struct Node
