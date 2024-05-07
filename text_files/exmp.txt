@@ -1,0 +1,14 @@
+Kick_off (Neymar);
+Kick_off (Messi);
+
+VAR (Neymar red_cards 12)
+match_start
+    Messi score 3 + 6;
+    Change (Neymar);
+match_end;
+
+Extra_time (Messi goals 16)
+match_start
+    Messi score Messi + 1;
+    Change (Messi);
+match_end;
