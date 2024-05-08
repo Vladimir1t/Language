@@ -1,56 +1,55 @@
-in(a);
-in(b);
-in(c);
-in(i);
+Kick_off (Messi);
+Kick_off (Neymar);
+Kick_off (Kante);
 
-anyNum  =  888;
-noRoots = -111;
+anyNum score 888;
+noRoots score -111;
 
-if (a == 0)
-{
-    if (c == 0)
-    {
-        if (b == 0)
-        {
-            x = anyNum;
-        };
+VAR (Messi assists 0)
+match_start
+    VAR (Kante assists 0)
+    match_start
+        VAR (Neymar assists 0)
+        match_start
+            Golovin score anyNum;
+        match_end;
 
-        if (b != 0)
-        {
-            x = 0;
-        };
-    };
+        VAR (Neymar loose 0)
+        match_start
+            Golovin score 0;
+        match_end;
+    match_end;
 
-    if (c != 0)
-    {
-        x = 0 - c / b;
-    };
+    VAR (Kante loose 0)
+    match_start
+        Golovin score 0 - Kante / Neymar;
+    match_end;
 
-    out(x);
-};
+    Change (Golovin);
+match_end;
 
-if (a != 0)
-{
-    discr = b * b - 4 * a * c;
+VAR (Messi loose 0)
+match_start
+    Dybala score Neymar * Neymar - 4 * Messi * Kante;
 
-    if (discr == 0)
-    {
-        x = 0 - b / (2 * a);
-        out(x);
-    };
+    VAR (Dybala assists 0)
+    match_start
+        Golovin score 0 - Neymar / (2 * Messi);
+        Change (Golovin);
+    match_end;
 
-    if (discr < 0)
-    {
-        x = noRoots;
-        out(x);
-    };
+    VAR (Dybala red_cards 0)
+    match_start
+        Golovin score noRoots;
+        Change (Golovin);
+    match_end;
 
-    if (discr > 0)
-    {
-        d = sqrt(discr);
-        x = (d - b) / 2;
-        y = 0 - (d + b) / 2;
-        out(x);
-        out(y);
-    };
-};
+    VAR (Dybala yellow_cards 0)
+    match_start
+        Harry_Kane score sqrt(Dybala);
+        Golovin score (Harry_Kane - Neymar) / 2;
+        Mbape score 0 - (Harry_Kane + Neymar) / 2;
+        Change (Golovin);
+        Change (Mbape);
+    match_end;
+match_end;
