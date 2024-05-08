@@ -91,17 +91,17 @@
     node->data.op = text_data[*i];  \
     *i += 1;                        \
 
-#define ADD_VARIABLE(...)                                   \
-    {                                                       \
-        char str[MAX_STR_SIZE] = {0};                       \
-        int j = 0;                                          \
-        while (isalpha (text_data[*i]))                     \
-        {                                                   \
-            str[j++] = text_data[*i];                       \
-            *i += 1;                                        \
-        }                                                   \
-        CALLOC (node->data.var, char, MAX_STR_SIZE);        \
-        strcpy (node->data.var, str);                       \
+#define ADD_VARIABLE(...)                                           \
+    {                                                               \
+        char str[MAX_STR_SIZE] = {0};                               \
+        int j = 0;                                                  \
+        while (isalpha (text_data[*i]) || text_data[*i] == '_')     \
+        {                                                           \
+            str[j++] = text_data[*i];                               \
+            *i += 1;                                                \
+        }                                                           \
+        CALLOC (node->data.var, char, MAX_STR_SIZE);                \
+        strcpy (node->data.var, str);                               \
     }
 
 #define ADD_SIGN(...)                                                               \
