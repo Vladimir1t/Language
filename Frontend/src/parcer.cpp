@@ -167,14 +167,6 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
         }
         else
         {
-            /*if (text_data[ptr] == '{')
-            {
-                ADD_TOKEN (CBR_O, br_o, text_data[ptr]);
-            }
-            else if (text_data[ptr] == '}')
-            {
-                ADD_TOKEN (CBR_C, br_c, text_data[ptr]);
-            }*/
             if (text_data[ptr] == '(')
             {
                 ADD_TOKEN (BR_O, br_o, text_data[ptr]);
