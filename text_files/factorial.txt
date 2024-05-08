@@ -1,27 +1,34 @@
-in(n);
+Kick_off (Neymar);
 
-undef = -111;
-fact  = 1;
+undef score -111;
+Salah  score 1;
 
-if (n <= 1)
-{
-    if (n < 0)
-    {
-        fact = undef;
-        out(fact);
-    };
-    if (n >= 0)
-    {
-        fact = 1;
-        out(fact);
-    };
-};
-if (n > 1)
-{
-    while (n > 0)
-    {
-        fact = fact * n;
-        n = n - 1;
-    };
-    out(fact);
-};
+VAR (Neymar goals 1)
+match_start
+
+    VAR (Neymar red_cards 0)
+    match_start
+        Salah score undef;
+        Change (Salah);
+    match_end;
+
+    VAR (Neymar ball_touch 0)
+    match_start
+        Salah score 1;
+        Change (Salah);
+    match_end;
+
+match_end;
+
+VAR (Neymar yellow_cards 1)
+match_start
+
+    Extra_time (Neymar yellow_cards 0)
+    match_start
+        Salah score Salah * Neymar;
+        Neymar score Neymar - 1;
+    match_end;
+
+    Change (Salah);
+
+match_end;
