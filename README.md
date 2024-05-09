@@ -5,7 +5,6 @@
 - [Frontend](#Frontend)
 - [Midlend](#Midlend)
 - [Backend](#Backend)
-- [Processor](#Processor)
 - [Используемые файлы](#Используемые-файлы)
 - [Синтаксис](#Синтаксис)
 - [Программы](#Программы)
@@ -84,13 +83,11 @@
         - *commands.h*
         - *library_of_defines.h*
         - *errors.h*
-
 - *Midlend*
     - src
         - *simplifier.cpp*
     - include
         - *simplifier.h*
-
 - *Backend*
     - src
         - *input_iutput.cpp*
@@ -125,7 +122,7 @@
   match_start   //  {
   match_end     //  }
   score         //  =
-  Kick_of       //  in()  - функция ввода с клавиитауры
+  Kick_off      //  in()  - функция ввода с клавиитауры
   Change        //  out() - фцнкция вывода
 
 ```
