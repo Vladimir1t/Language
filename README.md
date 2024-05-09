@@ -72,17 +72,14 @@
     - *Assembler* считывает передавеаемый ему ассемблерный код и создает байткод
     - *CPU* cчитывает созданный ассемблером байткод и декодирует команды и последовательно выпоняет их или пропускает некоторые в случае условного джампа.
 
-
 ## Используемые файлы:
 - *Frontend*
     - src
         - *input_output.cpp*
         - *main.cpp*
         - *pacer.cpp*
-
     - include
         - *parcer.h*
-
     - library
         - *commands.h*
         - *library_of_defines.h*
@@ -91,7 +88,6 @@
 - *Midlend*
     - src
         - *simplifier.cpp*
-
     - include
         - *simplifier.h*
 
@@ -100,33 +96,27 @@
         - *input_iutput.cpp*
         - *main.cpp*
         - *translator.cpp*
-
     - include
         - *backend.h*
-
     - library
         - *commands.h*
         - *library_of_defines.h*
         - *error.h*
-
     - processor
         - *Stack*
-
         - Assembler
             - src:     *assembler.cpp*
             - include: *assembler.h*
-
         - CPU
             - src:     *CPU.h*
             - include: *CPU.h*
-
         - Library
             - *DSL.h*
             - *commands.h*
 
 ## Синтаксис
 
-*** Футбольный Синтаксис ***
+***Футбольный Синтаксис***
 
 ```c
 
