@@ -74,25 +74,25 @@
 ## Используемые файлы:
 - *Frontend*
     - src
-        - *input_output.cpp*
+        - *input_output.cpp* - содержаться функции распечатки дерева
         - *main.cpp*
-        - *pacer.cpp*
+        - *pacer.cpp*        - токенизатор и алгоритм синтаксического анализа
     - include
         - *parcer.h*
     - library
         - *commands.h*
-        - *library_of_defines.h*
+        - *library_of_defines.h* - библиотека макросов
         - *errors.h*
 - *Midlend*
     - src
-        - *simplifier.cpp*
+        - *simplifier.cpp*       - 2 функции упрощения дерева
     - include
         - *simplifier.h*
 - *Backend*
     - src
-        - *input_iutput.cpp*
+        - *input_iutput.cpp*     - функции считывания дерева и его печати
         - *main.cpp*
-        - *translator.cpp*
+        - *translator.cpp*       - функция создания ассемблерного кода
     - include
         - *backend.h*
     - library
@@ -112,6 +112,26 @@
             - *commands.h*
 
 ## Синтаксис
+
+***Условия***
+- алгоритм синтаксического анализа
+
+```c
+
+  G         ::= equation '\0'
+  equation  ::= assign ( ';' assign )++
+  assign    ::= var /*переменная*/ '=' E | var /*функция*/ '(' var')' | var /*условный оператор*/ condition body
+  condition ::= '(' E 'SIGN' E ')'
+  body      ::= '{' equation '}'
+  E         ::= T ( '+'|'-' T )++
+  T         ::= P ( '*'|'/' P )++
+  P         ::= '(' E ')' | '(' E ')' '^' pow | /*op_long|var*/ F | N
+  pow       ::= '(' E ')'
+  F         ::= 'op_long' P | 'variable'
+  var       ::= 'variable' | 'if' | 'while' | 'func'/*in|out*/
+  N         ::= 'num'
+
+```
 
 ***Футбольный Синтаксис***
 
