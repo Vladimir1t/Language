@@ -8,6 +8,7 @@
 - [Используемые файлы](#Используемые-файлы)
 - [Синтаксис](#Синтаксис)
 - [Программы](#Программы)
+- [Как собирать](#Как-собирать)
 
 ---
 
@@ -171,22 +172,22 @@
   anyNum score 888;
   noRoots score -111;
 
-  VAR (Messi assists 0)
+  VAR (Messi assists 0)   // a == 0
   match_start
-      VAR (Kante assists 0)
+      VAR (Kante assists 0)  // c == 0
       match_start
-          VAR (Neymar assists 0)
+          VAR (Neymar assists 0)  // b == 0
           match_start
               Golovin score anyNum;
           match_end;
 
-          VAR (Neymar loose 0)
+          VAR (Neymar loose 0)  // b != 0
           match_start
               Golovin score 0;
           match_end;
       match_end;
 
-      VAR (Kante loose 0)
+      VAR (Kante loose 0)  // c != 0
       match_start
           Golovin score 0 - Kante / Neymar;
       match_end;
@@ -194,23 +195,23 @@
       Change (Golovin);
   match_end;
 
-  VAR (Messi loose 0)
+  VAR (Messi loose 0)  // a != 0
   match_start
-      Dybala score Neymar * Neymar - 4 * Messi * Kante;
+      Dybala score Neymar * Neymar - 4 * Messi * Kante;  // d = b*b - 4ac
 
-      VAR (Dybala assists 0)
+      VAR (Dybala assists 0)  // d == 0
       match_start
           Golovin score 0 - Neymar / (2 * Messi);
           Change (Golovin);
       match_end;
 
-      VAR (Dybala red_cards 0)
+      VAR (Dybala red_cards 0)  // d < 0
       match_start
           Golovin score noRoots;
           Change (Golovin);
       match_end;
 
-      VAR (Dybala yellow_cards 0)
+      VAR (Dybala yellow_cards 0)  // d > 0
       match_start
           Harry_Kane score sqrt(Dybala);
           Golovin score (Harry_Kane - Neymar) / 2;
@@ -225,21 +226,21 @@
 ### Пример программы **factorial**
 
 ```c
-  Kick_off (Neymar);
+  Kick_off (Neymar);  // ввод с клавиатуры
 
   undef score -111;
   Salah score 1;
 
-  VAR (Neymar goals 1)
+  VAR (Neymar goals 1)  // если номер меньше 1
   match_start
 
-      VAR (Neymar red_cards 0)
+      VAR (Neymar red_cards 0)  // если номер отрицательный
       match_start
           Salah score undef;
           Change (Salah);
       match_end;
 
-      VAR (Neymar ball_touch 0)
+      VAR (Neymar ball_touch 0) // если номер 1 или 0
       match_start
           Salah score 1;
           Change (Salah);
@@ -250,7 +251,7 @@
   VAR (Neymar yellow_cards 1)
   match_start
 
-      Extra_time (Neymar yellow_cards 0)
+      Extra_time (Neymar yellow_cards 0)  // цикл while
       match_start
           Salah score Salah * Neymar;
           Neymar score Neymar - 1;
@@ -261,3 +262,38 @@
   match_end;
 
 ```
+## Как собирать
+
+- Сборка осуществляется с помощью Makefile
+
+```c
+
+  CC = g++
+  program = text_files\factorial.txt
+
+  all: frontend backend cpu asm
+  	 Frontend\frontend.exe $(program)
+  	 Backend\backend.exe text_files\file_output.txt text_files\asm_file.txt
+  	 Backend\processor\Assembler\assembler.exe  text_files\asm_file.txt  Backend\processor\Assembler\res_ass.txt
+  	 Backend\processor\CPU\cpu.exe  Backend\processor\Assembler\res_ass.txt  text_files\result_file.txt
+
+  // Frontend
+  front: frontend
+  	 Frontend\frontend.exe $(program)
+
+  frontend: Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
+  	 $(CC) -o Frontend\frontend Frontend\src\main.cpp Frontend\src\parcer.cpp Frontend\src\input_output.cpp Frontend\src\simplifier.cpp
+
+  // Backend
+  back: backend
+  	 Backend\backend.exe text_files\file_output.txt text_files\asm_file.txt
+
+  backend: Backend\src\main.cpp Backend\src\input_output.cpp Backend\stack\src\stack.cpp Backend\src\translator.cpp
+  	 $(CC) -o Backend\backend Backend\src\main.cpp Backend\src\input_output.cpp Backend\stack\src\stack.cpp Backend\src\translator.cpp
+
+  proc: asm cpu
+  	 Backend\processor\Assembler\assembler.exe  text_files\asm_file.txt  Backend\processor\Assembler\res_ass.txt
+  	 Backend\processor\CPU\cpu.exe  Backend\processor\Assembler\res_ass.txt  text_files\result_file.txt
+
+```
+
