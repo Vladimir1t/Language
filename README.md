@@ -75,25 +75,25 @@
 ## Используемые файлы:
 - *Frontend*
     - src
-        - *input_output.cpp* - содержаться функции распечатки дерева
+        - *input_output.cpp*  // содержаться функции распечатки дерева
         - *main.cpp*
-        - *pacer.cpp*        - токенизатор и алгоритм синтаксического анализа
+        - *pacer.cpp*         // токенизатор и алгоритм синтаксического анализа
     - include
         - *parcer.h*
     - library
         - *commands.h*
-        - *library_of_defines.h* - библиотека макросов
+        - *library_of_defines.h* // библиотека макросов
         - *errors.h*
 - *Midlend*
     - src
-        - *simplifier.cpp*       - 2 функции упрощения дерева
+        - *simplifier.cpp*       // 2 функции упрощения дерева
     - include
         - *simplifier.h*
 - *Backend*
     - src
-        - *input_iutput.cpp*     - функции считывания дерева и его печати
+        - *input_iutput.cpp*     // функции считывания дерева и его печати
         - *main.cpp*
-        - *translator.cpp*       - функция создания ассемблерного кода
+        - *translator.cpp*       // функция создания ассемблерного кода
     - include
         - *backend.h*
     - library
