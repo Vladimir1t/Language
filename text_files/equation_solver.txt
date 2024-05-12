@@ -2,8 +2,9 @@ Kick_off (Messi);
 Kick_off (Neymar);
 Kick_off (Kante);
 
-anyNum score 888;
+anyNum  score 888;
 noRoots score -111;
+Golovin score noRoots;
 
 VAR (Messi assists 0)
 match_start
@@ -20,9 +21,12 @@ match_start
         match_end
     match_end
 
-    VAR (Kante loose 0)
+    VAR (Neymar loose 0)
     match_start
-        Golovin score 0 - Kante / Neymar;
+        VAR (Kante loose 0)
+        match_start
+            Golovin score 0 - Kante / Neymar;
+        match_end
     match_end
 
     Change (Golovin);
