@@ -12,21 +12,21 @@ match_start
         VAR (Neymar assists 0)
         match_start
             Golovin score anyNum;
-        match_end;
+        match_end
 
         VAR (Neymar loose 0)
         match_start
             Golovin score 0;
-        match_end;
-    match_end;
+        match_end
+    match_end
 
     VAR (Kante loose 0)
     match_start
         Golovin score 0 - Kante / Neymar;
-    match_end;
+    match_end
 
     Change (Golovin);
-match_end;
+match_end
 
 VAR (Messi loose 0)
 match_start
@@ -36,13 +36,13 @@ match_start
     match_start
         Golovin score 0 - Neymar / (2 * Messi);
         Change (Golovin);
-    match_end;
+    match_end
 
     VAR (Dybala red_cards 0)
     match_start
         Golovin score noRoots;
         Change (Golovin);
-    match_end;
+    match_end
 
     VAR (Dybala yellow_cards 0)
     match_start
@@ -51,5 +51,5 @@ match_start
         Mbape score 0 - (Harry_Kane + Neymar) / 2;
         Change (Golovin);
         Change (Mbape);
-    match_end;
-match_end;
+    match_end
+match_end

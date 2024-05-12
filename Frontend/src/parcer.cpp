@@ -2,16 +2,17 @@
 
 static FILE* error_file = fopen ("Frontend\\log\\parcer_error.txt", "w");
 
-#define IS_NUM isdigit (text_data[ptr]) || (text_data[ptr] == '-' && (isdigit (text_data[ptr + 1])))
-#define IS_STR_END tokens->array_tokens[*ptr].type == KEY_W && tokens->array_tokens[*ptr].data.key_w == ';'
-#define IS_SIGN_EQUAL value_1->type == T_VAR && tokens->array_tokens[*ptr].data.key_w == '='
-#define IS_BRACKET_C tokens->array_tokens[*ptr].type == BR_C && tokens->array_tokens[*ptr].data.br_c == ')'
-#define IS_BRACKET_O tokens->array_tokens[*ptr].type == BR_O && tokens->array_tokens[*ptr].data.br_o == '('
+#define IS_NUM isdigit    (text_data[ptr]) || (text_data[ptr] == '-' && (isdigit (text_data[ptr + 1])))
+#define IS_STR_END        tokens->array_tokens[*ptr].type == KEY_W && tokens->array_tokens[*ptr].data.key_w == ';'
+#define IS_BODY_END       tokens->array_tokens[*ptr].type == CBR_C && tokens->array_tokens[*ptr].data.br_c == '}'
+#define IS_SIGN_EQUAL     value_1->type == T_VAR && tokens->array_tokens[*ptr].data.key_w == '='
+#define IS_BRACKET_C      tokens->array_tokens[*ptr].type == BR_C && tokens->array_tokens[*ptr].data.br_c == ')'
+#define IS_BRACKET_O      tokens->array_tokens[*ptr].type == BR_O && tokens->array_tokens[*ptr].data.br_o == '('
 #define IS_OP_LONG_OR_VAR tokens->array_tokens[*ptr].type == VAR || tokens->array_tokens[*ptr].type == OP_L
-#define IS_MUL_OR_DIV tokens->array_tokens[*ptr].data.op == '*' || tokens->array_tokens[*ptr].data.op == '/'
-#define IS_ADD_OR_SUB tokens->array_tokens[*ptr].data.op == '+' || tokens->array_tokens[*ptr].data.op == '-'
-#define IS_OP text_data[ptr] == '+' || text_data[ptr] == '-' || text_data[ptr] == '*' || text_data[ptr] == '/' || text_data[ptr] == '^'
-#define IS_SPEC_SYMBOL text_data[ptr] == ' ' || text_data[ptr] == '\n' || text_data[ptr] == '\r'
+#define IS_MUL_OR_DIV     tokens->array_tokens[*ptr].data.op == '*' || tokens->array_tokens[*ptr].data.op == '/'
+#define IS_ADD_OR_SUB     tokens->array_tokens[*ptr].data.op == '+' || tokens->array_tokens[*ptr].data.op == '-'
+#define IS_OP             text_data[ptr] == '+' || text_data[ptr] == '-' || text_data[ptr] == '*' || text_data[ptr] == '/' || text_data[ptr] == '^'
+#define IS_SPEC_SYMBOL    text_data[ptr] == ' ' || text_data[ptr] == '\n' || text_data[ptr] == '\r'
 
 static int get_tokens (struct Tokens* tokens, const char* text_data);
 
@@ -199,7 +200,6 @@ struct Node* get_g (struct Tokens* tokens, size_t* ptr)
 {
     assert (tokens != NULL);
     assert (ptr != NULL);
-
     //printf ("G\n");
 
     struct Node* value = get_equation (tokens, ptr);
@@ -223,11 +223,13 @@ struct Node* get_equation (struct Tokens* tokens, size_t* ptr)
     struct Node*  value_1    = first_node;
     struct Node*  value_2    = NULL;
 
-    while (IS_STR_END)
+    while ((IS_STR_END) || (IS_BODY_END))
     {
         *ptr += 1;
         value_2 = get_assign (tokens, ptr);
-        if (IS_STR_END)
+        if (value_2 == NULL)
+            return first_node;
+        if (IS_STR_END || (IS_BODY_END))
         {
             value_2 = create_node (T_KEY_W, &str_end, value_2, NULL);
             value_1->right = value_2;
@@ -303,6 +305,7 @@ struct Node* get_condition (struct Tokens* tokens, size_t* ptr)
     assert (tokens != NULL);
     assert (ptr != NULL);
 
+    //printf ("Cond\n");
     struct Node* value_1 = NULL;
     struct Node* value_2 = NULL;
 
@@ -339,6 +342,7 @@ struct Node* get_body (struct Tokens* tokens, size_t* ptr)
     assert (tokens != NULL);
     assert (ptr != NULL);
 
+    //printf ("body\n");
     struct Node* value = NULL;
 
     if (tokens->array_tokens[*ptr].data.br_o == '{')
@@ -346,9 +350,9 @@ struct Node* get_body (struct Tokens* tokens, size_t* ptr)
         *ptr += 1;
         value = get_equation (tokens, ptr);
 
-        if (tokens->array_tokens[*ptr].data.br_c == '}')
-            *ptr += 1;
-        else
+        if (tokens->array_tokens[*ptr].data.br_c != '}')
+           // *ptr += 1;
+        //else
             return syntax_error ();
     }
     else
@@ -501,7 +505,7 @@ struct Node* get_var (struct Tokens* tokens, size_t* ptr)
     assert (tokens != NULL);
     assert (ptr != NULL);
 
-    //printf ("Var\n");
+    printf ("Var\n");
     struct Node* value = NULL;
 
     if (tokens->array_tokens[*ptr].type == VAR)
@@ -535,7 +539,7 @@ struct Node* get_n (struct Tokens* tokens, size_t* ptr)   //determine numbers an
 
     //printf ("N\n");
     struct Node* value = (struct Node*) calloc (1, sizeof (struct Node));
-
+    printf ("[%d]\n", tokens->array_tokens[*ptr].data.value);
     if (tokens->array_tokens[*ptr].type == NUM)
     {
         value->type = T_NUM;

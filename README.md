@@ -120,7 +120,7 @@
 ```c
 
   G         ::= equation '\0'
-  equation  ::= assign ( ';' assign )++
+  equation  ::= assign ( ';'|'}' assign )++
   assign    ::= var /*переменная*/ '=' E | var /*функция*/ '(' var')' | var /*условный оператор*/ condition body
   condition ::= '(' E 'SIGN' E ')'
   body      ::= '{' equation '}'
@@ -129,7 +129,7 @@
   P         ::= '(' E ')' | '(' E ')' '^' pow | /*op_long|var*/ F | N
   pow       ::= '(' E ')'
   F         ::= 'op_long' P | 'variable'
-  var       ::= 'variable' | 'if' | 'while' | 'func'/*in|out*/
+  var       ::= 'variable' | 'if' | 'while' | 'func' /*in|out*/
   N         ::= 'num'
 
 ```
@@ -162,6 +162,8 @@
 
 ## Программы
 
+- Для добавления новой программы, написанной на моем языке, стоит сначала изучить синтаксис, затем создать текстовый файл в папке *text_files* и добавить путь до этого файла в *Makefile* в переменную *program*.
+
 ### Пример программы **equation_solver**
 
 ```c
@@ -179,21 +181,21 @@
           VAR (Neymar assists 0)  // b == 0
           match_start
               Golovin score anyNum;
-          match_end;
+          match_end
 
           VAR (Neymar loose 0)  // b != 0
           match_start
               Golovin score 0;
-          match_end;
-      match_end;
+          match_end
+      match_end
 
       VAR (Kante loose 0)  // c != 0
       match_start
           Golovin score 0 - Kante / Neymar;
-      match_end;
+      match_end
 
       Change (Golovin);
-  match_end;
+  match_end
 
   VAR (Messi loose 0)  // a != 0
   match_start
@@ -203,13 +205,13 @@
       match_start
           Golovin score 0 - Neymar / (2 * Messi);
           Change (Golovin);
-      match_end;
+      match_end
 
       VAR (Dybala red_cards 0)  // d < 0
       match_start
           Golovin score noRoots;
           Change (Golovin);
-      match_end;
+      match_end
 
       VAR (Dybala yellow_cards 0)  // d > 0
       match_start
@@ -218,8 +220,8 @@
           Mbape score 0 - (Harry_Kane + Neymar) / 2;
           Change (Golovin);
           Change (Mbape);
-      match_end;
-  match_end;
+      match_end
+  match_end
 
 ```
 
@@ -238,15 +240,15 @@
       match_start
           Salah score undef;
           Change (Salah);
-      match_end;
+      match_end
 
       VAR (Neymar ball_touch 0) // если номер 1 или 0
       match_start
           Salah score 1;
           Change (Salah);
-      match_end;
+      match_end
 
-  match_end;
+  match_end
 
   VAR (Neymar yellow_cards 1)
   match_start
@@ -255,21 +257,21 @@
       match_start
           Salah score Salah * Neymar;
           Neymar score Neymar - 1;
-      match_end;
+      match_end
 
       Change (Salah);
 
-  match_end;
+  match_end
 
 ```
 ## Как собирать
 
-- Сборка осуществляется с помощью Makefile
+- Сборка осуществляется с помощью *Makefile*
 
 ```c
 
   CC = g++
-  program = text_files\factorial.txt
+  program = text_files\factorial.txt  // относительный путь до программы
 
   all: frontend backend cpu asm
   	 Frontend\frontend.exe $(program)

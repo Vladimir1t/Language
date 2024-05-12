@@ -1,7 +1,7 @@
 Kick_off (Neymar);
 
 undef score -111;
-Salah  score 1;
+Salah score 1;
 
 VAR (Neymar goals 1)
 match_start
@@ -10,15 +10,15 @@ match_start
     match_start
         Salah score undef;
         Change (Salah);
-    match_end;
+    match_end
 
     VAR (Neymar ball_touch 0)
     match_start
         Salah score 1;
         Change (Salah);
-    match_end;
+    match_end
 
-match_end;
+match_end
 
 VAR (Neymar yellow_cards 1)
 match_start
@@ -27,8 +27,8 @@ match_start
     match_start
         Salah score Salah * Neymar;
         Neymar score Neymar - 1;
-    match_end;
+    match_end
 
     Change (Salah);
 
-match_end;
+match_end
