@@ -33,7 +33,7 @@ static struct Node* syntax_error ();
 
 static size_t file_size_measure (FILE* const file_p);
 
-int get_database (struct Node** root, char* sourse_file)       // get data of tree in the following file
+int get_database (struct Node** root, char* sourse_file)      // get data of tree in the following file
 {
     CHECK_PTR (root);
     CHECK_PTR (sourse_file);
@@ -54,9 +54,6 @@ int get_database (struct Node** root, char* sourse_file)       // get data of tr
 
     struct Tokens tokens = {0};
     get_tokens (&tokens, text_data);
-
-    for (int i = 0; i < tokens.size; i++)
-        printf (".%d\n", tokens.array_tokens[i].type);
 
     size_t ptr = 0;
     *root = get_g (&tokens, &ptr);
@@ -103,7 +100,6 @@ int get_tokens (struct Tokens* tokens, const char* text_data)
             int i = 0, flag = 0;;
             while (isalpha (text_data[ptr]) || text_data[ptr] == '_')
                 str[i++] = text_data[ptr++];
-            printf ("[%s]\n", str);
 
             if (!strcmp (str, "VAR"))              // if
             {
@@ -505,7 +501,7 @@ struct Node* get_var (struct Tokens* tokens, size_t* ptr)
     assert (tokens != NULL);
     assert (ptr != NULL);
 
-    printf ("Var\n");
+    //printf ("Var\n");
     struct Node* value = NULL;
 
     if (tokens->array_tokens[*ptr].type == VAR)
@@ -539,7 +535,7 @@ struct Node* get_n (struct Tokens* tokens, size_t* ptr)   //determine numbers an
 
     //printf ("N\n");
     struct Node* value = (struct Node*) calloc (1, sizeof (struct Node));
-    printf ("[%d]\n", tokens->array_tokens[*ptr].data.value);
+    //printf ("[%d]\n", tokens->array_tokens[*ptr].data.value);
     if (tokens->array_tokens[*ptr].type == NUM)
     {
         value->type = T_NUM;
