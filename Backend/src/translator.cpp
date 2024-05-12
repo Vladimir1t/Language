@@ -23,12 +23,12 @@ int run_translator (struct Node* root, char* output_file)
 
     FOPEN (asm_file, output_file, "w");
 
-    struct Variables variables = {0};   // array of variables in program and their addresses in RAM
+    struct Variables variables = {0};            // array of variables in program and their addresses in RAM
     variables.capacity = 5;
     CALLOC (variables.array_var, struct Variable,  variables.capacity);
 
     make_asm_code (root, &variables, asm_file);
-    fprintf (asm_file, "hlt\n");
+    fprintf (asm_file, "hlt\n");                 // end of asm file
 
     fclose (asm_file);
 }
@@ -41,8 +41,8 @@ int make_asm_code (struct Node* node, struct Variables* variables, FILE* asm_fil
 
     if (err == 1)
         return ERROR;
-    printf ("-------------------------------\n");
-    printf ("type [%d]\n", node->type);
+    //printf ("-------------------------------\n");
+    //printf ("type [%d]\n", node->type);
 
     if (node->type == T_NUM)
     {
@@ -128,6 +128,10 @@ int make_asm_code (struct Node* node, struct Variables* variables, FILE* asm_fil
 
 int add_str_end_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (asm_file);
+    CHECK_PTR (variables);
+
     //printf (";\n");
     if (node->left != NULL && node->left->type != DEFUALT)
         make_asm_code (node->left, variables, asm_file);
@@ -138,6 +142,10 @@ int add_str_end_asm (struct Node* node, FILE* asm_file, struct Variables* variab
 
 int add_assignment_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (asm_file);
+    CHECK_PTR (variables);
+
     //printf ("[=]\n");
     make_asm_code (node->right, variables, asm_file);
     if (node->left->type == T_VAR)
@@ -147,7 +155,7 @@ int add_assignment_asm (struct Node* node, FILE* asm_file, struct Variables* var
             if (!strcmp (node->left->data.var, variables->array_var[i].name))
             {
                 flag = 1;
-                fprintf (asm_file, "pop [%d]\n", variables->array_var[i].adr);
+                fprintf (asm_file, "pop [%d]   # var %s\n", variables->array_var[i].adr, variables->array_var[i].name);
             }
         if (flag == 0)
         {
@@ -157,7 +165,7 @@ int add_assignment_asm (struct Node* node, FILE* asm_file, struct Variables* var
             }
             strcpy (variables->array_var[variables->size].name, node->left->data.var);
             variables->array_var[variables->size].adr = variables->size;
-            fprintf (asm_file, "pop [%d]\n", variables->array_var[variables->size].adr);
+            fprintf (asm_file, "pop [%d]   # var %s\n", variables->array_var[variables->size].adr, variables->array_var[variables->size].name);
             variables->size += 1;
         }
     }
@@ -167,10 +175,14 @@ int add_assignment_asm (struct Node* node, FILE* asm_file, struct Variables* var
 
 int add_if_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (asm_file);
+    CHECK_PTR (variables);
+
     //printf ("if\n");
     if (node->left != NULL && node->left->type == T_SIGN)
     {
-        printf ("[%s]\n", node->left->data.sign);
+        //printf ("[%s]\n", node->left->data.sign);
         if (node->left->left != NULL && node->left->left->type != DEFUALT)
             make_asm_code (node->left->left, variables, asm_file);
         if (node->left->right != NULL && node->left->right->type != DEFUALT)
@@ -207,6 +219,10 @@ int add_if_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
 
 int add_while_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (asm_file);
+    CHECK_PTR (variables);
+
     //printf ("if\n");
     if (node->left != NULL && node->left->type == T_SIGN)
     {
@@ -256,6 +272,10 @@ int add_while_asm (struct Node* node, FILE* asm_file, struct Variables* variable
 
 int add_func_asm (struct Node* node, FILE* asm_file, struct Variables* variables)
 {
+    CHECK_PTR (node);
+    CHECK_PTR (asm_file);
+    CHECK_PTR (variables);
+
     if (!strcmp (node->data.func, "in"))
     {
         fprintf (asm_file, "in\n");

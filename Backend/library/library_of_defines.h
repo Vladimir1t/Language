@@ -163,20 +163,20 @@
     sscanf (elem, "%d", &(node->type));     \
     //printf ("{%d}\n", node->type);
 
-#define ADD_VAR_ASM(...)                                                    \
-    int flag = 0;                                                           \
-    for (int i = 0; i < variables->size; i++)                               \
-        if (!strcmp (node->data.var, variables->array_var[i].name))         \
-        {                                                                   \
-            flag = 1;                                                       \
-            printf ("var\n");                                               \
-            fprintf (asm_file, "push [%d]\n", variables->array_var[i].adr); \
-        }                                                                   \
-    if (flag == 0)                                                          \
-    {                                                                       \
-        printf ("<< Undefined variable >>\n");                              \
-        err = 1;                                                            \
-        return ERROR;                                                       \
+#define ADD_VAR_ASM(...)                                                                \
+    int flag = 0;                                                                       \
+    for (int i = 0; i < variables->size; i++)                                           \
+        if (!strcmp (node->data.var, variables->array_var[i].name))                     \
+        {                                                                               \
+            flag = 1;                                                                   \
+            fprintf (asm_file, "push [%d]  # var %s\n", variables->array_var[i].adr,   \
+                                                         variables->array_var[i].name); \
+        }                                                                               \
+    if (flag == 0)                                                                      \
+    {                                                                                   \
+        printf ("<< Undefined variable >>\n");                                          \
+        err = 1;                                                                        \
+        return ERROR;                                                                   \
     }
 
 #define ADD_OP_ASM(elem)                                                \
