@@ -286,7 +286,8 @@ int add_func_asm (struct Node* node, FILE* asm_file, struct Variables* variables
                 if (!strcmp (node->left->data.var, variables->array_var[i].name))
                 {
                     flag = 1;
-                    fprintf (asm_file, "pop [%d]\n", variables->array_var[i].adr);
+                    fprintf (asm_file, "pop [%d]   # var %s\n", variables->array_var[i].adr,
+                                                                variables->array_var[i].name);
                 }
             if (flag == 0)
             {
@@ -296,7 +297,8 @@ int add_func_asm (struct Node* node, FILE* asm_file, struct Variables* variables
                 }
                 strcpy (variables->array_var[variables->size].name, node->left->data.var);
                 variables->array_var[variables->size].adr = variables->size;
-                fprintf (asm_file, "pop [%d]\n", variables->array_var[variables->size].adr);
+                fprintf (asm_file, "pop [%d]   # var %s\n", variables->array_var[variables->size].adr,
+                                                            variables->array_var[variables->size].name);
                 variables->size += 1;
             }
         }
