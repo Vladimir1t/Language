@@ -8,6 +8,7 @@ Golovin score noRoots;
 
 VAR (Messi assists 0)
 match_start
+
     VAR (Kante assists 0)
     match_start
         VAR (Neymar assists 0)
@@ -30,10 +31,12 @@ match_start
     match_end
 
     Change (Golovin);
+
 match_end
 
 VAR (Messi loose 0)
 match_start
+
     Dybala score Neymar * Neymar - 4 * Messi * Kante;
 
     VAR (Dybala assists 0)
@@ -53,7 +56,9 @@ match_start
         Harry_Kane score sqrt(Dybala);
         Golovin score (Harry_Kane - Neymar) / 2;
         Mbape score 0 - (Harry_Kane + Neymar) / 2;
+
         Change (Golovin);
         Change (Mbape);
     match_end
+
 match_end
