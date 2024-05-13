@@ -1,9 +1,9 @@
 in
-pop [0]
+pop [0]   # var Messi
 in
-pop [1]
+pop [1]   # var Neymar
 in
-pop [2]
+pop [2]   # var Kante
 push 888
 pop [3]   # var anyNum
 push -111
