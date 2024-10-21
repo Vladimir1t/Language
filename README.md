@@ -267,29 +267,14 @@
 
 - Сборка осуществляется с помощью *Makefile*
 
-```c
-
-  CC = g++
-  program = text_files\factorial.txt  // относительный путь до программы
-
-  all: frontend backend cpu asm
-  	 Frontend\frontend.exe $(program)
-  	 Backend\backend.exe text_files\file_output.txt text_files\asm_file.txt
-  	 Backend\processor\Assembler\assembler.exe  text_files\asm_file.txt  Backend\processor\Assembler\res_ass.txt
-  	 Backend\processor\CPU\cpu.exe  Backend\processor\Assembler\res_ass.txt  text_files\result_file.txt
-
-  // Frontend
-  front: frontend
-  	 Frontend\frontend.exe $(program)
-
-  // Backend
-  back: backend
-  	 Backend\backend.exe text_files\file_output.txt text_files\asm_file.txt
-
-  proc: asm cpu
-  	 Backend\processor\Assembler\assembler.exe  text_files\asm_file.txt  Backend\processor\Assembler\res_ass.txt
-  	 Backend\processor\CPU\cpu.exe  Backend\processor\Assembler\res_ass.txt  text_files\result_file.txt
-
+```shell
+  make all  // сборка всего проекта и запсуск исполняемых файлов (под ОС Windows) 
+ 
+  make front // сборка и исполнение Frontend и Midlend
+ 
+  make back  // сборка и исполнение Backend
+  	 
+  make proc // запуск исполнения процессора 
 ```
 
 ## Благодарность
