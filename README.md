@@ -274,16 +274,16 @@
 ```
 Выбираем файл для компиляци. Пример для factorial.txt
 ```shell
-    build/front.x text_files/factorial.txt   
+  build/front.x text_files/factorial.txt   
 ```
 ```shell
-    build/back.x text_files/file_output.txt text_files/asm_file.txt  
+  build/back.x text_files/file_output.txt text_files/asm_file.txt  
 ```
 ```shell
-    build/asm.x text_files/asm_file.txt  Backend/processor/Assembler/res_ass.txt
+  build/asm.x text_files/asm_file.txt  Backend/processor/Assembler/res_ass.txt
 ```
 ```shell
-build/proc.x Backend/processor/Assembler/res_ass.txt  text_files/result_file.txt
+  build/proc.x Backend/processor/Assembler/res_ass.txt  text_files/result_file.txt
 ```
 
 ## Благодарность
