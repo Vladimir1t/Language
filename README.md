@@ -265,16 +265,25 @@
 ```
 ## Как собирать
 
-- Сборка осуществляется с помощью *Makefile*
+- Сборка осуществляется с помощью *Cmake*
 
 ```shell
-  make all  // сборка всего проекта и запсуск исполняемых файлов (под ОС Windows) 
- 
-  make front // сборка и исполнение Frontend и Midlend
- 
-  make back  // сборка и исполнение Backend
-  	 
-  make proc // запуск исполнения процессора 
+  cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
+
+  cmake --build build
+```
+Выбираем файл для компиляци. Пример для factorial.txt
+```shell
+    build/front.x text_files/factorial.txt   
+```
+```shell
+    build/back.x text_files/file_output.txt text_files/asm_file.txt  
+```
+```shell
+    build/asm.x text_files/asm_file.txt  Backend/processor/Assembler/res_ass.txt
+```
+```shell
+build/proc.x Backend/processor/Assembler/res_ass.txt  text_files/result_file.txt
 ```
 
 ## Благодарность
