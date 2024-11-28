@@ -1,6 +1,6 @@
-#include "..\include\backend.h"
+#include "backend.h"
 
-static FILE* error_file = fopen ("log\\error_file_input_output.txt", "w");
+static FILE* error_file = fopen ("log/error_file_input_output.txt", "w");
 
 static int    construct_data_nodes (struct Node* root, char* text_data, size_t file_size);
 static int    get_node_data        (char* text_data, int* i, struct Node* node);
@@ -39,7 +39,6 @@ int construct_data_nodes (struct Node* root, char* text_data, size_t file_size)
     struct Node* prev_node = NULL;
     struct stack stk       = {0};
 
-    //printf (" DATA_BASE \n");
     stack_ctor (&stk, 2);
     for (int i = 0, position = ROOT; i < file_size; i++)
     {
@@ -385,6 +384,7 @@ void dump_node (struct Node *node)
 
     printf ("\n----------------------------------\n");
 }
+
 
 void clean_buffer ()
 {

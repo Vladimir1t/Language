@@ -8,13 +8,11 @@
 #include <ctype.h>
 #include <assert.h>
 
-#include "..\library\errors.h"
-#include "..\library\library_of_defines.h"
-#include "..\library\commands.h"
-#include "..\stack\include\stack.h"
+#include "errors.h"
+#include "library_of_defines.h"
+#include "commands.h"
+#include "stack.h"
 
-//#include "..\Processor\include\assembler.h"
-//#include "..\Processor\include\CPU.h"
 
 enum POSITION
 {

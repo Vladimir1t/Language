@@ -1,6 +1,6 @@
-#include "..\include\stack.h"
+#include "./../include/stack.h"
 
-FILE* ERROR_FILE = fopen ("Log\\file_error_stack.txt", "w");
+FILE* ERROR_FILE = fopen ("Log/file_error_stack.txt", "w");
 
 void stack_ctor (struct stack* stk, const size_t capacity)
 {

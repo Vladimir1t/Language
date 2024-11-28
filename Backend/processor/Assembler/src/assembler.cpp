@@ -1,9 +1,10 @@
-#include "..\include\assembler.h"
+#include "assembler.h"
 
-static FILE* error_file_assembler = fopen ("Log\\error_assembler.txt", "w");
+static FILE* error_file_assembler = fopen ("Log/error_assembler.txt", "w");
 
 int main (int argc, char* argv[])
 {
+    printf ("\n----------- LANGUAGE ASSEMBLY -----------\n\n");
     if (argc < 3)
         fprintf (error_file_assembler, "-- too few command arguments --\n");
 
@@ -44,9 +45,10 @@ int ReadSourseFile (FILE* sourseF, struct Strings* Str)
     CALLOC (Str->stringsP, struct String, Str->nStrings);
 
     StringsPointerRead (Str, isR);                                // divide text into array of strings
-
-    StrPrint (Str);
-
+    
+    #ifndef NDEBUG
+        StrPrint (Str);
+    #endif
     return 0;
  }
 
@@ -78,7 +80,6 @@ int MakeBytecode (FILE* resultF, struct Strings* Str)
             {
                 commandNum = (char) AllCommands[i].num;
                 memcpy (buffer + ptr * sizeof (buffer[0]), &commandNum, sizeof (char));
-                //printf ("word[0] = %d\n", *(char*) (buffer + ptr));
 
                 if (AllCommands[i].argMod == HAS_ARG)
                 {
@@ -131,7 +132,9 @@ int GetArgument (char* command, char* buffer, size_t* ptr, struct mark* allMarks
             if (!strcmp (allMarks[j].name, command))
             {
                 arg = allMarks[j].address;
-                printf ("adr %d\n", arg);
+                #ifndef NDEBUG
+                    printf ("adr %d\n", arg);
+                #endif
             }
         }
     }
@@ -176,9 +179,7 @@ int FindMarks (struct Strings* Str, size_t* len, struct mark* allMarks, size_t* 
         if (pointer != NULL)
         {
             memcpy (allMarks[*marksNum].name, pointer - (MARK_LEN - 1), MARK_LEN);
-            //printf ("mark %s\n", allMarks[*marksNum].name);
             allMarks[*marksNum].address = ptr;
-            //printf ("[%d]\n", allMarks[*marksNum].address);
             (*marksNum)++;
 
             REALLOC (allMarks, struct mark, (*marksNum + 1));
@@ -187,15 +188,15 @@ int FindMarks (struct Strings* Str, size_t* len, struct mark* allMarks, size_t* 
     }
     *len = ptr;
 
-    for (int i = 0; i < *marksNum; i++)
-    {
-        printf ("[%d] %s\n", i, allMarks[i].name);
-    }
+    #ifndef NDEBUG
+        for (int i = 0; i < *marksNum; i++)
+            printf ("[%d] %s\n", i, allMarks[i].name);
+    #endif
 
     return SUCCESS;
 }
 
-char* strtokR (char* str, const char* delim)                  // is a reentrant version of strtok()
+char* strtokR (char* str, const char* delim)        // is a reentrant version of strtok()
 {
     static char* ptr;
 

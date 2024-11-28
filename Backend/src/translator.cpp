@@ -1,6 +1,6 @@
-#include "..\include\backend.h"
+#include "backend.h"
 
-static FILE* error_file = fopen ("log\\error_file_translator.txt", "w");
+static FILE* error_file = fopen ("log/error_file_translator.txt", "w");
 
 static int make_asm_code      (struct Node* node, struct Variables* variables, FILE* asm_file);
 
@@ -31,6 +31,8 @@ int run_translator (struct Node* root, char* output_file)
     fprintf (asm_file, "hlt\n");                 // end of asm file
 
     fclose (asm_file);
+
+    return 0;
 }
 
 int make_asm_code (struct Node* node, struct Variables* variables, FILE* asm_file)
@@ -41,8 +43,11 @@ int make_asm_code (struct Node* node, struct Variables* variables, FILE* asm_fil
 
     if (err == 1)
         return ERROR;
-    //printf ("-------------------------------\n");
-    //printf ("type [%d]\n", node->type);
+
+    #ifndef NDEBUG
+        printf ("-------------------------------\n");
+        printf ("type [%d]\n", node->type);
+    #endif
 
     if (node->type == T_NUM)
     {

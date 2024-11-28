@@ -1,4 +1,4 @@
-#include "..\include\simplifier.h"
+#include "simplifier.h"
 
 static FILE* error_file = fopen ("Frontend\\log\\error_file_simplifier.txt", "w");
 

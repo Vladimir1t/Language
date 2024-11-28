@@ -1,110 +1,47 @@
 in
-pop [0]   # var Messi
-in
-pop [1]   # var Neymar
-in
-pop [2]   # var Kante
-push 888
-pop [3]   # var anyNum
+pop [0]   # var Neymar
 push -111
-pop [4]   # var noRoots
-push [4]  # var noRoots
-pop [5]   # var Golovin
-push [0]  # var Messi
+pop [1]   # var undef
+push 1
+pop [2]   # var Salah
+push [0]  # var Neymar
+push 1
+ja lb_10:  # if
+push [0]  # var Neymar
 push 0
-jne lb_10:  # if
-push [2]  # var Kante
-push 0
-jne lb_11:  # if
-push [1]  # var Neymar
-push 0
-jne lb_12:  # if
-push [3]  # var anyNum
-pop [5]   # var Golovin
-lb_12:
-push [1]  # var Neymar
-push 0
-je lb_13:  # if
-push 0
-pop [5]   # var Golovin
-lb_13:
+jae lb_11:  # if
+push [1]  # var undef
+pop [2]   # var Salah
+push [2]  # var Salah
+out
 lb_11:
-push [1]  # var Neymar
+push [0]  # var Neymar
 push 0
-je lb_14:  # if
-push [2]  # var Kante
-push 0
-je lb_15:  # if
-push 0
-push [2]  # var Kante
-push [1]  # var Neymar
-div
-sub
-pop [5]   # var Golovin
-lb_15:
-lb_14:
-push [5]  # var Golovin
+jb lb_12:  # if
+push 1
+pop [2]   # var Salah
+push [2]  # var Salah
 out
+lb_12:
 lb_10:
-push [0]  # var Messi
+push [0]  # var Neymar
+push 1
+jbe lb_13:  # if
+lb_14:   # while
+push [0]  # var Neymar
 push 0
-je lb_16:  # if
-push [1]  # var Neymar
-push [1]  # var Neymar
+jbe lb_15:
+push [2]  # var Salah
+push [0]  # var Neymar
 mul
-push 4
-push [0]  # var Messi
-mul
-push [2]  # var Kante
-mul
+pop [2]   # var Salah
+push [0]  # var Neymar
+push 1
 sub
-pop [6]   # var Dybala
-push [6]  # var Dybala
-push 0
-jne lb_17:  # if
-push 0
-push [1]  # var Neymar
-push 2
-push [0]  # var Messi
-mul
-div
-sub
-pop [5]   # var Golovin
-push [5]  # var Golovin
+pop [0]   # var Neymar
+jmp lb_14:  # jump to start of while
+lb_15:
+push [2]  # var Salah
 out
-lb_17:
-push [6]  # var Dybala
-push 0
-jae lb_18:  # if
-push [4]  # var noRoots
-pop [5]   # var Golovin
-push [5]  # var Golovin
-out
-lb_18:
-push [6]  # var Dybala
-push 0
-jbe lb_19:  # if
-push [6]  # var Dybala
-sqrt
-pop [7]   # var Harry_Kane
-push [7]  # var Harry_Kane
-push [1]  # var Neymar
-sub
-push 2
-div
-pop [5]   # var Golovin
-push 0
-push [7]  # var Harry_Kane
-push [1]  # var Neymar
-add
-push 2
-div
-sub
-pop [8]   # var Mbape
-push [5]  # var Golovin
-out
-push [8]  # var Mbape
-out
-lb_19:
-lb_16:
+lb_13:
 hlt

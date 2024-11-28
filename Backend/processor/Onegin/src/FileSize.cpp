@@ -1,4 +1,4 @@
-#include "..\include\Onegin.h"
+#include "Onegin.h"
 
 int FileSize (FILE* const fPointer)
 {

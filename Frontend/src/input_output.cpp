@@ -1,6 +1,6 @@
-#include "..\include\parcer.h"
+#include "parcer.h"
 
-static FILE* error_file = fopen ("Frontend\\log\\input_output_error.txt", "w");
+static FILE* error_file = fopen ("Frontend/log/input_output_error.txt", "w");
 
 static int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num);
 
@@ -65,10 +65,6 @@ int add_node_in_graph (struct Node* node, FILE* file_graph, size_t* node_num)
             PRINT_GR ("%s ()", func);
         else if (node->type == T_SIGN)
             PRINT_GR (" \\%s ", sign);
-
-            //for (int i = 0; i < SIGN_NUM; i++)
-            //    if (!strcmp (node->data.sign, array_sign[i].name))
-            //        PRINT_GR_SIGN ("sign %s", array_sign[i].code);
     }
 
     node->num_in_tree = *node_num;
@@ -112,7 +108,9 @@ int tree_output (struct Node* node, FILE* file_output)
     CHECK_PTR (node);
     CHECK_PTR (file_output);
 
-    dump_node (node);
+    #ifndef NDEBUG
+        dump_node (node);
+    #endif
 
     if (node->type == T_VAR)
         fprintf (file_output, "{ #%d# #%s# ", node->type, node->data.var);

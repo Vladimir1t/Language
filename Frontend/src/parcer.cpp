@@ -1,6 +1,6 @@
-#include "..\include\parcer.h"
+#include "parcer.h"
 
-static FILE* error_file = fopen ("Frontend\\log\\parcer_error.txt", "w");
+static FILE* error_file = fopen ("Frontend/log/parcer_error.txt", "w");
 
 #define IS_NUM isdigit    (text_data[ptr]) || (text_data[ptr] == '-' && (isdigit (text_data[ptr + 1])))
 #define IS_STR_END        tokens->array_tokens[*ptr].type == KEY_W && tokens->array_tokens[*ptr].data.key_w == ';'

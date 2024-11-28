@@ -8,9 +8,9 @@
 #include <ctype.h>
 #include <assert.h>
 
-#include "..\library\errors.h"
-#include "..\library\library_of_defines.h"
-#include "..\library\commands.h"
+#include "errors.h"
+#include "library_of_defines.h"
+#include "commands.h"
 #include "simplifier.h"
 
 union node_data

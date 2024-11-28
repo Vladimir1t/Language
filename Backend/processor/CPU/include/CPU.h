@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "..\..\Assembler\include\assembler.h"
-#include "..\..\Stack\include\stack.h"
-#include "..\..\Onegin\include\onegin.h"
-#include "..\..\Library\commands.h"
+#include "assembler.h"
+#include "stack.h"
+#include "onegin.h"
+#include "commands.h"
 
 const char   MASK        = 3;                         /* 0000 0011 */
 const size_t RAM_SIZE    = 50;                        /* size of a RAM */

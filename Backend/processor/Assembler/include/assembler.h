@@ -8,11 +8,11 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "..\..\Stack\include\stack.h"
-#include "..\..\Onegin\include\onegin.h"
-#include "..\..\Library\errors.h"
-#include "..\..\Library\DSL.h"
-#include "..\..\Library\commands.h"
+#include "stack.h"
+#include "onegin.h"
+#include "errors.h"
+#include "DSL.h"
+#include "commands.h"
 
 const size_t REGISTRS_NUM =  4;
 

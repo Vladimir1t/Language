@@ -1,4 +1,4 @@
-#include "..\include\stack.h"
+#include "stack.h"
 
 FILE* ERROR_FILE = fopen ("Log\\error_file_stack.txt", "w");
 

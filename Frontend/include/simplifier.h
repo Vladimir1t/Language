@@ -2,7 +2,7 @@
 #define SIMPLIFIER_H_INCLUDED
 
 #include "parcer.h"
-#include "..\library\commands.h"
+#include "commands.h"
 
 #define SPEC_WORDS T_NUM && tree->type != DEFUALT && tree->type != T_KEY_W  &&  tree->type != T_IF_ && tree->type != T_FUNC && tree->type != T_SIGN && tree->type != T_WHILE
 

@@ -1,6 +1,14 @@
-#include "..\include\CPU.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
-static FILE* ErrorFile = fopen ("Log\\error_CPU.txt", "w");
+#include "CPU.h"
+#include "assembler.h"
+#include "stack.h"
+#include "onegin.h"
+#include "commands.h"
+
+static FILE* ErrorFile = fopen ("Log/error_CPU.txt", "w");
 
 int main (int argc, char* argv[])
 {

@@ -1,4 +1,4 @@
-#include "..\include\Onegin.h"
+#include "Onegin.h"
 
 fileFormat StringsCount (struct Strings* StrP)
 {
@@ -21,8 +21,9 @@ fileFormat StringsCount (struct Strings* StrP)
             continue;
         }
     }
-    printf ("number of strings: %d\n", StrP->nStrings);
-
+    #ifndef NDEBUG
+        printf ("number of strings: %d\n", StrP->nStrings);
+    #endif
     char* elementP = strchr (StrP->textPointer, '\0');
     isR = (fileFormat) (StrP->nStrings > 1 && *(elementP + 1) == '\n');  // defines file format
 
