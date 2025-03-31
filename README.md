@@ -14,7 +14,7 @@
 
 ## Аннотация
 
-***Футбольный язык программирования*** (Football Language of programming) - программа, которая содержит в себе 3 блока: *Frontend*, *Midlend*, *Backend*, *CPU*.
+***Футбольный язык программирования*** (Football Language of programming) - программа, которая содержит в себе 4 блока: *Frontend*, *Midlend*, *Backend*, *CPU*.
 
 Рассмотрим поподробнее каждую из подпрограмм.
 
